@@ -170,26 +170,7 @@ verify(token, process.env.NEXTAUTH_SECRET);
 - `CLOUDINARY_*` - Jika menggunakan Cloudinary
 - `NEXT_PUBLIC_WHATSAPP_NUMBER` - Nomor WhatsApp bisnis
 
-## 📋 Checklist Implementasi
-
-- [x] Setup Next.js project + dependencies
-- [x] Database schema (Prisma)
-- [x] Public landing page sections
-- [x] Public API endpoints
-- [x] Admin login page
-- [x] Admin dashboard + sidebar
-- [ ] Admin CRUD pages (Products, Services, Testimonials, Hours, Settings, Inquiries)
-- [ ] Image upload dengan Cloudinary
-- [ ] Drag-to-reorder functionality
-- [ ] Moderation untuk testimoni
-- [ ] SEO optimization (meta tags, sitemap, schema)
-- [ ] Testing (unit, integration)
-- [ ] Performance optimization (ISR, image optimization)
-- [ ] Accessibility audit (WCAG 2.1 AA)
-- [ ] Documentation completion
-
 ## Troubleshooting
-
 ### Database Connection Error
 ```bash
 # Test connection
