@@ -27,7 +27,7 @@ export default function ServicesPage() {
     fetchServices(token);
   }, [router]);
 
-  const fetchServices = async (token: string) => {
+  const fetchServices = async () => {
     try {
       const res = await fetch('/api/services');
       const data = await res.json();
