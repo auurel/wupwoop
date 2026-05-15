@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Primary Orange */
+  --color-primary: #f5a623;
+  --color-primary-dark: #e89010;
+  --color-primary-light: #ffb84d;
+
+  /* Cream / Background */
+  --color-cream-light: #fff8e7;
+  --color-cream: #fdebc4;
+  --color-peach: #ffe5b4;
+
+  /* Text */
+  --color-text-dark: #3d2817;
+  --color-text-heading: #f5a623;
+  --color-text-body: #4a3520;
+
+  /* Pattern Background */
+  --pattern-bg: #fff1d6;
+}
+
+* {
+  @apply box-border;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply font-sans text-text-body;
+  background-color: var(--color-cream-light);
+}
+
+/* Heading Styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-sans font-bold;
+}
+
+h1 {
+  @apply text-3xl md:text-4xl lg:text-5xl;
+  font-family: 'Playfair Display', serif;
+}
+
+h2 {
+  @apply text-2xl md:text-3xl lg:text-4xl;
+  color: var(--color-primary);
+}
+
+h3 {
+  @apply text-xl md:text-2xl;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-cream-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dark);
+}
+
+/* Damask Pattern Background */
+.pattern-damask {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 10C30 20, 20 30, 20 50C20 70, 30 80, 50 90C70 80, 80 70, 80 50C80 30, 70 20, 50 10Z' fill='%23F5A623' opacity='0.03'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  /* larger tile makes pattern more subtle */
+  background-size: 180px 180px;
+}
+
+/* Wavy Divider */
+.wavy-divider {
+  position: relative;
+  height: 120px; /* increase so gradient is visible */
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+.wavy-divider::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  /* Smooth gradient that fades to transparent toward the top */
+  background: linear-gradient(to top, var(--color-primary) 0%, var(--color-primary-light) 55%, rgba(245,166,35,0.0) 100%);
+  pointer-events: none;
+}
+
+/* Smooth Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+/* Utility Classes */
+.section-container {
+  @apply max-w-container mx-auto px-4 md:px-8;
+}
+
+.section-padding {
+  @apply py-16 md:py-20 lg:py-24;
+}
+
+.heading-section {
+  @apply text-2xl md:text-3xl lg:text-4xl font-bold text-primary;
+}
+
+.button-primary {
+  @apply px-8 py-3 bg-primary text-white rounded-full font-semibold transition-all duration-300 hover:bg-primary-dark hover:shadow-soft;
+}
+
+.button-secondary {
+  @apply px-8 py-3 bg-cream-peach text-text-dark rounded-full font-semibold transition-all duration-300 hover:shadow-soft hover:scale-105;
+}
+
+.card-soft {
+  @apply rounded-2xl bg-cream p-6 shadow-soft transition-all duration-300;
+}
+
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-md hover:scale-105;
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+a:focus-visible {
+  @apply outline-2 outline-offset-2 outline-primary;
+}
+
+/* Loading skeleton */
+.skeleton {
+  @apply animate-pulse bg-cream-peach rounded;
+}
