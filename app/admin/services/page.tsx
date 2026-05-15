@@ -24,7 +24,7 @@ export default function ServicesPage() {
       setAdmin(JSON.parse(adminData));
     }
 
-    fetchServices(token);
+    fetchServices();
   }, [router]);
 
   const fetchServices = async () => {
