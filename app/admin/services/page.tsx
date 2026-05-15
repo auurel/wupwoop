@@ -67,7 +67,7 @@ export default function ServicesPage() {
             </div>
 
             <div className="space-y-3">
-              {services.map((service, index) => (
+              {services.map((service) => (
                 <div 
                   key={service.id} 
                   className="flex items-start gap-4 p-4 bg-white border-l-4 border-orange-400 rounded hover:shadow-md transition-shadow"

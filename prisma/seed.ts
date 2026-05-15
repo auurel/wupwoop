@@ -161,7 +161,7 @@ async function main() {
     { day: 'sunday', dayLabel: 'Minggu', isClosed: true, order: 7 },
   ];
 
-  const operatingHours = await Promise.all(
+  await Promise.all(
     days.map((d) =>
       prisma.operatingHours.create({
         data: {
@@ -179,9 +179,9 @@ async function main() {
   console.log(`✅ Created operating hours for all days`);
 
   // Seed SiteSettings
-  const settings = await prisma.siteSettings.create({
+  await prisma.siteSettings.create({
     data: {
-      whatsappNumber: '628xxxxxxxxx', // Update this
+      whatsappNumber: '6281223975431', // Update this
       defaultWhatsappMessage: 'Halo Muzayyan, saya ingin bertanya tentang layanan Anda',
       address: 'Jl Ahmad Yani No 83 Kebumen, Jawa Tengah',
       postalCode: '54311',
