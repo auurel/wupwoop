@@ -5,6 +5,7 @@ import ProductsSection from '@/components/sections/ProductsSection';
 import CTASection from '@/components/sections/CTASection';
 import TestimonialsSection from '@/components/sections/TestimonialsSection';
 
+export const dynamic = 'force-dynamic';
 export default function Home() {
   return (
     <main>
