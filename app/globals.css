@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800&display=swap');
 
 :root {
   /* Primary Orange */
@@ -88,6 +89,56 @@ h3 {
   background-size: 180px 180px;
 }
 
+/* Glassmorphism effect for navbar */
+.glass-effect {
+  backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Hero batik background (uses public/images/batik.svg) */
+.hero-batik {
+  background-color: var(--color-cream-light);
+  position: relative;
+  overflow: hidden;
+  /* use the batik SVG as a single background image sized to requested dimensions */
+  background-image: url('/images/batik.svg');
+  background-repeat: no-repeat;
+  background-position: center top;
+  /* default: scale to full width while keeping 730px height so image won't tile or break */
+  background-size: 100% 730px;
+  height: 730px;
+  margin-bottom: 0; /* ensure no gap below hero */
+}
+
+/* For very wide screens, use the exact requested width to avoid upscaling artifacts */
+@media (min-width: 2138.92px) {
+  .hero-batik {
+    background-size: 2138.92px 730px;
+  }
+}
+
+/* Font helpers */
+@font-face {
+  font-family: 'Flamante Roma';
+  src: url('/fonts/Flamante-Roma-Medium.ttf') format('truetype'),
+       url('/fonts/Flamante-Roma.woff2') format('woff2'),
+       url('/fonts/Flamante-Roma.woff') format('woff');
+  font-weight: 500 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-flamante {
+  font-family: 'Flamante Roma', 'Playfair Display', serif;
+}
+
+.font-nunito {
+  font-family: 'Nunito Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-size: 10pt; /* as requested */
+  font-stretch: semi-expanded;
+}
+
 /* Wavy Divider */
 .wavy-divider {
   position: relative;
@@ -98,15 +149,141 @@ h3 {
 }
 
 .wavy-divider::after {
+  display: none; /* disable gradient overlay */
+}
+
+/* Fixed wave under the hero section */
+.hero-wave {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 735px; /* match requested wave height */
+  background-image: url('/images/wave.svg');
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  /* use exact requested dimensions by default */
+  background-size: 1540px 735px;
+  pointer-events: none;
+  z-index: -20;
+}
+
+/* Section background wave (applied to sections like About) */
+.bg-wave {
+  position: relative;
+  /* background gradient fallback kept by existing classes; wave sits on top */
+  background-image: url('/images/wave.svg');
+  background-repeat: no-repeat;
+  background-position: top center;
+  /* default to requested pixel size */
+  background-size: 1540px 735px;
+  /* keep wave fixed to viewport so it doesn't tile or jump */
+  background-attachment: fixed;
+}
+
+/* Responsive: scale down width to fit smaller screens while keeping height */
+@media (max-width: 1540px) {
+  .bg-wave,
+  .hero-wave {
+    background-size: 100% 735px; /* fit screen width, maintain height */
+  }
+}
+
+/* Original wave SVG element: place full original SVG inside sections without scaling or cropping */
+.wave-original {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  pointer-events: none;
+  z-index: -5; /* behind section content but above page background */
+  display: block;
+}
+
+/* Full-section wave background (uses original SVG as section background) */
+.bg-wave-full {
+  background-image: url('/images/wave.svg');
+  background-repeat: no-repeat;
+  background-position: center 0px;
+  /* make the wave full width while preserving its aspect ratio; fixed height 735px */
+  background-size: 100% 735px;
+  background-color: transparent !important;
+  background-blend-mode: normal !important;
+  background-attachment: scroll !important; /* scroll with section content */
+  opacity: 1 !important; /* ensure fully opaque */
+  transition: none !important; /* prevent fade/animations */
+  margin-top: -90px; /* overlap with hero to show wave */
+  padding-top: 90px; /* push content down */
+  position: relative;
+  isolation: isolate;
+}
+
+/* Smooth fade to the next section color at the bottom edge */
+.bg-wave-full::after {
   content: '';
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 100%;
-  /* Smooth gradient that fades to transparent toward the top */
-  background: linear-gradient(to top, var(--color-primary) 0%, var(--color-primary-light) 55%, rgba(245,166,35,0.0) 100%);
+  height: clamp(110px, 16vw, 180px);
+  background: linear-gradient(
+    to bottom,
+    rgba(253, 235, 196, 0) 0%,
+    rgba(255, 248, 231, 0.75) 60%,
+    rgba(255, 248, 231, 1) 100%
+  );
   pointer-events: none;
+  z-index: 0;
+}
+
+.bg-wave-full > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Prevent any hover/focus/active states or pseudo-element overlays from altering opacity */
+.bg-wave-full:hover,
+.bg-wave-full:focus,
+.bg-wave-full:active {
+  background-image: url('/images/wave.svg') !important;
+  opacity: 1 !important;
+  transition: none !important;
+}
+
+.bg-wave-full::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Ensure child elements are not affected by unexpected opacity/transition rules */
+.bg-wave-full * {
+  opacity: 1 !important;
+  transition: none !important;
+}
+
+/* Force-disable ALL animations/transitions/filters/transforms inside wave section */
+.bg-wave-full,
+.bg-wave-full * {
+  animation: none !important;
+  transition: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* Remove hover/focus/active effects completely */
+.bg-wave-full:hover,
+.bg-wave-full:focus,
+.bg-wave-full:active {
+  opacity: 1 !important;
+  filter: none !important;
+  transition: none !important;
 }
 
 /* Smooth Animations */
@@ -140,7 +317,11 @@ h3 {
 
 /* Utility Classes */
 .section-container {
-  @apply max-w-container mx-auto px-4 md:px-8;
+  width: min(96vw, 1600px);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(12px, 2vw, 32px);
+  padding-right: clamp(12px, 2vw, 32px);
 }
 
 .section-padding {

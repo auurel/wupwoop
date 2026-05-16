@@ -42,31 +42,32 @@ export default function Navbar() {
   };
 
   return (
-    <nav
-      className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        'pattern-damask bg-cream-light',
-        hasScroll && 'shadow-soft'
-      )}
-    >
-      <div className="max-w-container mx-auto px-4 md:px-8">
-        <div className="flex items-center justify-between h-20">
+    <nav className="fixed top-2 md:top-4 left-0 right-0 z-50">
+      <div className="w-[min(96vw,1600px)] mx-auto px-[clamp(12px,2vw,32px)]">
+        <div
+          className={cn(
+            'flex items-center justify-between h-[clamp(44px,5.2vw,56px)] rounded-full px-[clamp(12px,2vw,24px)] transition-all duration-300',
+            'backdrop-blur-xl bg-[rgba(250,215,113,0.16)] border border-[rgba(255,255,255,0.35)]',
+            hasScroll && 'bg-[rgba(250,215,113,0.20)] shadow-lg'
+          )}
+        >
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 text-2xl font-bold">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
-              <span>M</span>
-            </div>
-            <span className="text-primary">Muzayyan</span>
+          <Link href="/" className="flex items-center gap-2">
+            <img
+              src="/images/logo.svg"
+              alt="Muzayyan Logo"
+              className="h-[clamp(22px,3vw,32px)] w-auto"
+            />
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-[clamp(18px,2.4vw,34px)]">
             {navItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
-                className="font-medium text-text-dark hover:text-primary transition-colors"
+                className="whitespace-nowrap text-[clamp(15px,1.3vw,18px)] font-medium [font-family:'Poppins',sans-serif] text-[#562F00] hover:text-primary transition-colors duration-200"
               >
                 {item.label}
               </a>
@@ -75,7 +76,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 hover:bg-cream rounded-lg transition-colors"
+            className="lg:hidden p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
@@ -85,13 +86,13 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden pb-4 space-y-3 border-t border-primary/10">
+          <div className="lg:hidden mt-3 p-3 space-y-3 rounded-2xl backdrop-blur-xl bg-[rgba(250,215,113,0.16)] border border-[rgba(255,255,255,0.35)] shadow-lg">
             {navItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
-                className="block px-4 py-2 font-medium text-text-dark hover:bg-cream rounded-lg transition-colors"
+                className="block px-4 py-2 font-medium [font-family:'Poppins',sans-serif] text-[#562F00] hover:bg-white/20 rounded-lg transition-colors duration-200"
               >
                 {item.label}
               </a>

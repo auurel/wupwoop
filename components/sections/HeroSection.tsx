@@ -25,10 +25,11 @@ const itemVariants = {
 export default function HeroSection() {
   return (
     <section
-      className="relative min-h-screen flex items-center pt-20 pb-16 md:pb-24 lg:pb-32 pattern-damask bg-cream-light"
+      className="relative h-[730px] flex items-center justify-center pb-20 hero-batik"
       id="hero"
     >
-      <div className="max-w-container mx-auto px-4 md:px-8">
+      {/* Batik background applied via CSS (.hero-batik) */}
+      <div className="w-[min(96vw,1600px)] mx-auto px-[clamp(12px,2vw,32px)]">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -38,7 +39,7 @@ export default function HeroSection() {
           {/* Main Heading */}
           <motion.h1
             variants={itemVariants}
-            className="text-4xl md:text-5xl lg:text-6xl font-serif italic text-text-dark mb-6 md:mb-8 max-w-3xl"
+            className="text-4xl md:text-5xl lg:text-6xl font-serif italic text-text-dark mb-6 md:mb-8 max-w-3xl font-flamante"
           >
             Wujudkan Pakaian Impian Anda
           </motion.h1>
@@ -46,7 +47,7 @@ export default function HeroSection() {
           {/* Subheading */}
           <motion.p
             variants={itemVariants}
-            className="text-lg md:text-xl text-text-body max-w-2xl leading-relaxed"
+            className="text-lg md:text-xl text-text-body max-w-2xl leading-relaxed font-nunito"
           >
             Solusi jahit gamis, koko, dan seragam terpercaya. Pengerjaan tepat waktu dengan kualitas
             jahitan kelas atas yang membuat Anda tampil lebih percaya diri.
@@ -56,6 +57,8 @@ export default function HeroSection() {
 
       {/* Wavy Divider */}
       <div className="absolute bottom-0 left-0 right-0 wavy-divider" />
+      {/* Fixed wave under the hero to visually separate sections */}
+      <div className="hero-wave" aria-hidden />
     </section>
   );
 }

@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { verify } from 'jsonwebtoken';
 
+export const dynamic = 'force-dynamic';
+
 function verifyToken(request: Request) {
   const authHeader = request.headers.get('authorization');
   const token = authHeader?.replace('Bearer ', '');

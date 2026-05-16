@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "binary"
 }
 
@@ -29,7 +26,7 @@ model Product {
   title         String
   description   String?
   imageUrl      String
-  imagePublicId String?  // untuk Cloudinary
+  imagePublicId String?
   category      String?
   order         Int      @default(0)
   isFeatured    Boolean  @default(false)
@@ -40,15 +37,15 @@ model Product {
 }
 
 model Testimonial {
-  id              String   @id @default(cuid())
+  id              String    @id @default(cuid())
   customerName    String
   customerInitial String?
   avatarUrl       String?
-  rating          Int      @default(5)
+  rating          Int       @default(5)
   message         String
-  isApproved      Boolean  @default(false)
-  isFeatured      Boolean  @default(false)
-  submittedAt     DateTime @default(now())
+  isApproved      Boolean   @default(false)
+  isFeatured      Boolean   @default(false)
+  submittedAt     DateTime  @default(now())
   approvedAt      DateTime?
 
   @@map("testimonials")
@@ -67,35 +64,35 @@ model OperatingHours {
 }
 
 model SiteSettings {
-  id                      String  @id @default(cuid())
-  whatsappNumber          String  @default("")
-  defaultWhatsappMessage  String  @default("Halo Muzayyan, saya ingin bertanya tentang layanan Anda")
-  address                 String  @default("Jl Ahmad Yani No 83 Kebumen, Jawa Tengah")
-  postalCode              String  @default("54311")
-  mapEmbedUrl             String  @default("")
-  tiktokUrl               String?
-  tiktokUsername          String? @default("ruang_jahit_muzzayan")
-  instagramUrl            String?
-  instagramUsername       String? @default("ruangjahitmuzzayan")
-  facebookUrl             String?
-  facebookUsername        String? @default("Muzayyan Id")
-  heroTitle               String  @default("Wujudkan Pakaian Impian Anda")
-  heroSubtitle            String  @default("Solusi jahit gamis, koko, dan seragam terpercaya. Pengerjaan tepat waktu dengan kualitas jahitan kelas atas yang membuat Anda tampil lebih percaya diri.")
-  aboutTitle              String  @default("Muzayyan")
-  aboutContent            String  @default("Muzayyan merupakan layanan jasa jahit dan penjualan produk ready to wear yang berdiri sejak 1 maret 2017. Muzayyan menerima jasa jahit costum, seragam dan makloon dengan kebijakan masing-masing harga sesuai kategori. Selain itu muzayyan juga menyediakan produk ready to wear seperti gamis, tunik, dailly wear.\n\nMuzayyan mulai menerapkan sustainable fashion dimulai dari memanfaatkan perca kain untuk membuat souvenir seperti ganci, lanyard, tempat tisu, tempat pensil, tas serut dll")
-  aboutImageUrl           String?
-  updatedAt               DateTime @updatedAt
+  id                     String   @id @default(cuid())
+  whatsappNumber         String   @default("")
+  defaultWhatsappMessage String   @default("Halo Muzayyan, saya ingin bertanya tentang layanan Anda")
+  address                String   @default("Jl Ahmad Yani No 83 Kebumen, Jawa Tengah")
+  postalCode             String   @default("54311")
+  mapEmbedUrl            String   @default("")
+  tiktokUrl              String?
+  tiktokUsername         String?  @default("ruang_jahit_muzzayan")
+  instagramUrl           String?
+  instagramUsername      String?  @default("ruangjahitmuzzayan")
+  facebookUrl            String?
+  facebookUsername       String?  @default("Muzayyan Id")
+  heroTitle              String   @default("Wujudkan Pakaian Impian Anda")
+  heroSubtitle           String   @default("Solusi jahit gamis, koko, dan seragam terpercaya. Pengerjaan tepat waktu dengan kualitas jahitan kelas atas yang membuat Anda tampil lebih percaya diri.")
+  aboutTitle             String   @default("Muzayyan")
+  aboutContent           String   @default("Muzayyan merupakan layanan jasa jahit dan penjualan produk ready to wear yang berdiri sejak 1 maret 2017. Muzayyan menerima jasa jahit costum, seragam dan makloon dengan kebijakan masing-masing harga sesuai kategori. Selain itu muzayyan juga menyediakan produk ready to wear seperti gamis, tunik, dailly wear.\n\nMuzayyan mulai menerapkan sustainable fashion dimulai dari memanfaatkan perca kain untuk membuat souvenir seperti ganci, lanyard, tempat tisu, tempat pensil, tas serut dll")
+  aboutImageUrl          String?
+  updatedAt              DateTime @updatedAt
 
   @@map("site_settings")
 }
 
 model Admin {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id        String    @id @default(cuid())
+  email     String    @unique
   password  String
   name      String
-  role      String   @default("admin")
-  createdAt DateTime @default(now())
+  role      String    @default("admin")
+  createdAt DateTime  @default(now())
   lastLogin DateTime?
 
   @@map("admins")
