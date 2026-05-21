@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { Poppins, Playfair_Display } from 'next/font/google';
 import './globals.css';
-import Navbar from '@/components/sections/Navbar';
-import Footer from '@/components/sections/Footer';
+import SiteChrome from '@/components/layout/SiteChrome';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -35,9 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="id" className={`${poppins.variable} ${playfair.variable}`}>
       <body className="bg-cream-light">
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );

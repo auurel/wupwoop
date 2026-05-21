@@ -20,6 +20,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [admin, setAdmin] = useState<any>(null);
   const [showForm, setShowForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
@@ -70,6 +71,11 @@ export default function ProductsPage() {
     } catch (error) {
       console.error('Error deleting product:', error);
     }
+  };
+
+  const handleEdit = (product: Product) => {
+    setEditingProduct(product);
+    setShowForm(true);
   };
 
   return (
@@ -125,7 +131,10 @@ export default function ProductsPage() {
                     </td>
                     <td>
                       <div className="flex gap-2">
-                        <button className="admin-btn admin-btn-secondary text-xs">
+                        <button
+                          onClick={() => handleEdit(product)}
+                          className="admin-btn admin-btn-secondary text-xs"
+                        >
                           Edit
                         </button>
                         <button
@@ -145,9 +154,14 @@ export default function ProductsPage() {
 
         {showForm && (
           <ProductFormModal
-            onClose={() => setShowForm(false)}
+            product={editingProduct}
+            onClose={() => {
+              setShowForm(false);
+              setEditingProduct(null);
+            }}
             onSuccess={() => {
               setShowForm(false);
+              setEditingProduct(null);
               const token = localStorage.getItem('adminToken');
               if (token) fetchProducts(token);
             }}
@@ -159,16 +173,17 @@ export default function ProductsPage() {
 }
 
 interface ProductFormModalProps {
+  product?: Product | null;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-function ProductFormModal({ onClose, onSuccess }: ProductFormModalProps) {
+function ProductFormModal({ product, onClose, onSuccess }: ProductFormModalProps) {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    imageUrl: '',
-    category: '',
+    title: product?.title || '',
+    description: product?.description || '',
+    imageUrl: product?.imageUrl || '',
+    category: product?.category || '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -180,8 +195,8 @@ function ProductFormModal({ onClose, onSuccess }: ProductFormModalProps) {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch('/api/admin/products', {
-        method: 'POST',
+      const res = await fetch(product ? `/api/admin/products/${product.id}` : '/api/admin/products', {
+        method: product ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -189,7 +204,7 @@ function ProductFormModal({ onClose, onSuccess }: ProductFormModalProps) {
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) throw new Error('Gagal menambah produk');
+      if (!res.ok) throw new Error(product ? 'Gagal memperbarui produk' : 'Gagal menambah produk');
 
       onSuccess();
     } catch (err) {
@@ -206,7 +221,9 @@ function ProductFormModal({ onClose, onSuccess }: ProductFormModalProps) {
         onClick={(e) => e.stopPropagation()}
         className="bg-white rounded-lg p-8 max-w-md w-full space-y-4"
       >
-        <h2 className="text-2xl font-bold text-gray-900">Tambah Produk</h2>
+        <h2 className="text-2xl font-bold text-gray-900">
+          {product ? 'Edit Produk' : 'Tambah Produk'}
+        </h2>
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">

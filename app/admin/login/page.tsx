@@ -112,14 +112,14 @@ export default function AdminLoginPage() {
         </div>
 
         {/* Demo Credentials */}
-        <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        {/* <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
           <p className="text-xs text-blue-700 font-semibold mb-2">Demo Credentials:</p>
           <p className="text-xs text-blue-600">
             Email: admin@muzayyan.com
             <br />
             Password: Admin@123456
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
