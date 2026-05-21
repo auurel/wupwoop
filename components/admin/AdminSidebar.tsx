@@ -37,9 +37,11 @@ export default function AdminSidebar() {
       {/* Logo */}
       <div className="px-6 mb-8">
         <Link href="/admin" className="flex items-center gap-2 text-xl font-bold">
-          <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
-            M
-          </div>
+          <img
+            src="/images/logo.svg"
+            alt="Muzayyan Logo"
+            className="w-10 h-10 rounded-full bg-white/70 p-1 object-contain"
+          />
           <span>Muzayyan</span>
         </Link>
       </div>
