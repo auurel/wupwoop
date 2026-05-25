@@ -16,7 +16,7 @@
 }
 
 .admin-sidebar {
-  background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-cream-peach) 100%));
+  background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-cream-peach) 100%);
   color: var(--color-text-dark);
   padding: 2rem 0;
   position: fixed;

@@ -10,6 +10,7 @@ import {
   Clock,
   Settings,
   Mail,
+  UserCircle2,
   LogOut,
 } from 'lucide-react';
 
@@ -21,6 +22,7 @@ const menuItems = [
   { label: 'Jam Operasional', href: '/admin/hours', icon: Clock },
   { label: 'Inquiries', href: '/admin/inquiries', icon: Mail },
   { label: 'Pengaturan', href: '/admin/settings', icon: Settings },
+  { label: 'Profil Admin', href: '/admin/profile', icon: UserCircle2 },
 ];
 
 export default function AdminSidebar() {

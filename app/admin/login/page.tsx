@@ -101,6 +101,12 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
+        <div className="mt-4 text-center">
+          <Link href="/admin/forgot-password" className="text-sm text-orange-500 hover:text-orange-600 font-semibold">
+            Lupa password?
+          </Link>
+        </div>
+
         {/* Footer */}
         <div className="mt-6 pt-6 border-t border-gray-200 text-center">
           <p className="text-sm text-gray-600">

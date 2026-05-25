@@ -11,7 +11,7 @@ export default function AdminHeader({ admin }: { admin?: Admin }) {
     <div className="admin-header mb-8">
       <div>
         <h2 className="text-lg font-semibold text-gray-900">
-          Selamat datang, {admin?.name || 'Admin'}
+          Selamat datang {admin?.name || 'Admin'}
         </h2>
         <p className="text-sm text-gray-600">{admin?.email}</p>
       </div>

@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { verify } from 'jsonwebtoken';
+import type { NextRequest } from 'next/server';
 
 function verifyToken(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -17,17 +18,18 @@ function verifyToken(request: Request) {
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const tokenData = verifyToken(request);
   if (!tokenData) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
+    const { id } = await params;
     const body = await request.json();
 
     const testimonial = await prisma.testimonial.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         customerName: body.customerName || undefined,
         customerInitial: body.customerInitial || undefined,
@@ -47,14 +49,15 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const tokenData = verifyToken(request);
   if (!tokenData) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    await prisma.testimonial.delete({ where: { id: params.id } });
+    const { id } = await params;
+    await prisma.testimonial.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting testimonial:', error);

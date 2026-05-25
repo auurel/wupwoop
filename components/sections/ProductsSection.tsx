@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { X } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -37,13 +36,12 @@ const itemVariants = {
 export default function ProductsSection() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const sortedProducts = [...products].sort((a, b) => a.order - b.order);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch('/api/products');
+        const res = await fetch('/api/products', { cache: 'no-store' });
         const payload = await res.json();
         // API returns { data: Product[] , pagination: {...} }
         const list = Array.isArray(payload) ? payload : payload?.data ?? [];
@@ -56,24 +54,23 @@ export default function ProductsSection() {
     };
 
     fetchProducts();
+
+    const refetchOnVisible = () => {
+      if (document.visibilityState === 'visible') {
+        fetchProducts();
+      }
+    };
+
+    window.addEventListener('focus', fetchProducts);
+    document.addEventListener('visibilitychange', refetchOnVisible);
+    const intervalId = window.setInterval(fetchProducts, 15000);
+
+    return () => {
+      window.removeEventListener('focus', fetchProducts);
+      document.removeEventListener('visibilitychange', refetchOnVisible);
+      window.clearInterval(intervalId);
+    };
   }, []);
-
-  const handleProductClick = (product: Product, index: number) => {
-    setSelectedProduct(product);
-    setSelectedIndex(index);
-  };
-
-  const handleNext = () => {
-    const newIndex = (selectedIndex + 1) % products.length;
-    setSelectedProduct(products[newIndex]);
-    setSelectedIndex(newIndex);
-  };
-
-  const handlePrev = () => {
-    const newIndex = (selectedIndex - 1 + products.length) % products.length;
-    setSelectedProduct(products[newIndex]);
-    setSelectedIndex(newIndex);
-  };
 
   if (loading) {
     return (
@@ -112,105 +109,30 @@ export default function ProductsSection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-100px' }}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5"
+            className="flex gap-4 md:gap-5 overflow-x-auto overflow-y-hidden pb-4 pr-1 snap-x snap-mandatory scroll-smooth cursor-grab active:cursor-grabbing"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {products
-              .sort((a, b) => a.order - b.order)
-              .map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  variants={itemVariants}
-                  onClick={() => handleProductClick(product, index)}
-                  className="cursor-pointer group"
-                >
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-3xl shadow-soft transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                    <Image
-                      src={product.imageUrl}
-                      alt={product.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                </motion.div>
-              ))}
+            {sortedProducts.map((product) => (
+              <motion.div
+                key={product.id}
+                variants={itemVariants}
+                className="group snap-start flex-none w-[80%] sm:w-[45%] lg:w-[calc((100%-4.5rem)/4)] cursor-default"
+              >
+                <div className="relative aspect-[3/4] overflow-hidden rounded-3xl shadow-soft transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-md pointer-events-none">
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 80vw, (max-width: 1024px) 45vw, 25vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </section>
-
-      {/* Lightbox Modal */}
-      {selectedProduct && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => setSelectedProduct(null)}
-          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 md:p-8"
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-2xl"
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setSelectedProduct(null)}
-              className="absolute -top-10 right-0 text-white hover:text-primary transition-colors z-10"
-              aria-label="Close"
-            >
-              <X size={32} />
-            </button>
-
-            {/* Image */}
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-3xl">
-              <Image
-                src={selectedProduct.imageUrl}
-                alt={selectedProduct.title}
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-
-            {/* Info */}
-            <div className="bg-cream-light p-6 rounded-b-3xl">
-              <h3 className="text-xl md:text-2xl font-bold text-text-dark mb-2">
-                {selectedProduct.title}
-              </h3>
-              {selectedProduct.description && (
-                <p className="text-text-body mb-4">{selectedProduct.description}</p>
-              )}
-              {selectedProduct.category && (
-                <p className="text-sm text-primary font-semibold mb-4">
-                  {selectedProduct.category}
-                </p>
-              )}
-
-              {/* Navigation */}
-              <div className="flex items-center justify-between gap-4">
-                <button
-                  onClick={handlePrev}
-                  className="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors"
-                >
-                  ← Sebelumnya
-                </button>
-                <span className="text-sm text-text-body">
-                  {selectedIndex + 1} / {products.length}
-                </span>
-                <button
-                  onClick={handleNext}
-                  className="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors"
-                >
-                  Berikutnya →
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
     </>
   );
 }

@@ -98,6 +98,20 @@ model Admin {
   @@map("admins")
 }
 
+model AdminInvite {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String
+  role        String   @default("admin")
+  tokenHash   String   @unique
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdAt   DateTime @default(now())
+  createdById String?
+
+  @@map("admin_invites")
+}
+
 model ContactInquiry {
   id        String   @id @default(cuid())
   name      String

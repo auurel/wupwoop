@@ -126,7 +126,7 @@ export default function ProductsPage() {
                       <img
                         src={product.imageUrl}
                         alt={product.title}
-                        className="w-10 h-10 object-cover rounded"
+                        className="w-10 h-10 object-contain rounded bg-white"
                       />
                     </td>
                     <td>
@@ -179,6 +179,8 @@ interface ProductFormModalProps {
 }
 
 function ProductFormModal({ product, onClose, onSuccess }: ProductFormModalProps) {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState(product?.imageUrl || '');
   const [formData, setFormData] = useState({
     title: product?.title || '',
     description: product?.description || '',
@@ -188,6 +190,65 @@ function ProductFormModal({ product, onClose, onSuccess }: ProductFormModalProps
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    setImagePreview(product?.imageUrl || '');
+    setSelectedFile(null);
+    setFormData({
+      title: product?.title || '',
+      description: product?.description || '',
+      imageUrl: product?.imageUrl || '',
+      category: product?.category || '',
+    });
+  }, [product]);
+
+  useEffect(() => {
+    return () => {
+      if (imagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+
+    if (imagePreview.startsWith('blob:')) {
+      URL.revokeObjectURL(imagePreview);
+    }
+
+    setSelectedFile(file);
+    setImagePreview(file ? URL.createObjectURL(file) : product?.imageUrl || '');
+  };
+
+  const uploadImage = async () => {
+    if (!selectedFile) {
+      if (product?.imageUrl) {
+        return formData.imageUrl;
+      }
+
+      throw new Error('Silakan pilih file gambar terlebih dahulu');
+    }
+
+    const uploadForm = new FormData();
+    uploadForm.append('file', selectedFile);
+
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/api/admin/products/upload', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: uploadForm,
+    });
+
+    if (!response.ok) {
+      throw new Error('Gagal mengunggah gambar');
+    }
+
+    const data = await response.json();
+    return data.imageUrl as string;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -195,13 +256,17 @@ function ProductFormModal({ product, onClose, onSuccess }: ProductFormModalProps
 
     try {
       const token = localStorage.getItem('adminToken');
+      const uploadedImageUrl = await uploadImage();
       const res = await fetch(product ? `/api/admin/products/${product.id}` : '/api/admin/products', {
         method: product ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          imageUrl: uploadedImageUrl,
+        }),
       });
 
       if (!res.ok) throw new Error(product ? 'Gagal memperbarui produk' : 'Gagal menambah produk');
@@ -259,17 +324,25 @@ function ProductFormModal({ product, onClose, onSuccess }: ProductFormModalProps
         </div>
 
         <div>
-          <label className="admin-form-label">URL Gambar</label>
+          <label className="admin-form-label">Upload Gambar</label>
           <input
-            type="url"
-            required
-            value={formData.imageUrl}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, imageUrl: e.target.value }))
-            }
-            className="admin-input"
-            placeholder="https://..."
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="admin-input py-2"
           />
+          <p className="mt-2 text-xs text-gray-500">
+            Upload file gambar langsung. Jika tidak memilih file baru saat edit, gambar lama tetap dipakai.
+          </p>
+          {imagePreview && (
+            <div className="mt-3 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+              <img
+                src={imagePreview}
+                alt="Preview gambar produk"
+                className="h-44 w-full object-contain bg-white"
+              />
+            </div>
+          )}
         </div>
 
         <div>

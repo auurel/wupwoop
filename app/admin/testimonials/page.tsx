@@ -5,11 +5,25 @@ import { useRouter } from 'next/navigation';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
 
+type Testimonial = {
+  id: string;
+  customerName: string;
+  customerInitial?: string | null;
+  avatarUrl?: string | null;
+  rating: number;
+  message: string;
+  isApproved: boolean;
+  isFeatured: boolean;
+  submittedAt?: string;
+  approvedAt?: string | null;
+};
+
 export default function TestimonialsPage() {
   const router = useRouter();
   const [admin, setAdmin] = useState<any>(null);
-  const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
@@ -63,12 +77,46 @@ export default function TestimonialsPage() {
     }
   };
 
+  const handleApprovalToggle = async (id: string, isApproved: boolean) => {
+    try {
+      setUpdatingId(id);
+      const token = localStorage.getItem('adminToken');
+      const res = await fetch(`/api/admin/testimonials/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ isApproved }),
+      });
+
+      if (!res.ok) throw new Error('Failed to update testimonial');
+
+      const updated = await res.json();
+      setTestimonials((prev) =>
+        prev.map((item) => (item.id === id ? updated : item))
+      );
+    } catch (error) {
+      console.error('Error updating testimonial:', error);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   return (
     <div className="admin-container">
       <AdminSidebar />
       <div className="admin-main">
         <AdminHeader admin={admin} />
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Moderate Testimoni</h1>
+        <div className="flex items-center justify-between gap-4 mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">Moderate Testimoni</h1>
+          <button
+            onClick={() => fetchTestimonials()}
+            className="admin-btn admin-btn-secondary text-xs"
+          >
+            Refresh
+          </button>
+        </div>
 
         {loading ? (
           <div className="text-center py-8">Memuat data...</div>
@@ -82,10 +130,23 @@ export default function TestimonialsPage() {
               <div key={item.id} className="admin-card flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="font-semibold text-gray-900">{item.customerName}</p>
-                  <p className="text-sm text-gray-600">{item.message}</p>
-                  <p className="text-xs text-gray-500 mt-1">Rating: {item.rating} | {item.isApproved ? 'Disetujui' : 'Menunggu'}</p>
+                  <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap">{item.message}</p>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Rating: {item.rating} | {item.isApproved ? 'Disetujui' : 'Menunggu approval'}
+                  </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => handleApprovalToggle(item.id, !item.isApproved)}
+                    disabled={updatingId === item.id}
+                    className={item.isApproved ? 'admin-btn admin-btn-secondary text-xs' : 'admin-btn admin-btn-primary text-xs'}
+                  >
+                    {updatingId === item.id
+                      ? 'Menyimpan...'
+                      : item.isApproved
+                        ? 'Batalkan Approval'
+                        : 'Setujui'}
+                  </button>
                   <button onClick={() => handleDelete(item.id)} className="admin-btn admin-btn-danger text-xs">
                     Hapus
                   </button>

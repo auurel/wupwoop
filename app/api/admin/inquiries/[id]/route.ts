@@ -1,17 +1,19 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { verifyAdminToken } from '@/lib/admin-auth';
+import type { NextRequest } from 'next/server';
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!verifyAdminToken(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
+    const { id } = await params;
     const body = await request.json();
 
     const inquiry = await prisma.contactInquiry.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name: body.name || undefined,
         phone: body.phone || undefined,
@@ -29,13 +31,14 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!verifyAdminToken(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    await prisma.contactInquiry.delete({ where: { id: params.id } });
+    const { id } = await params;
+    await prisma.contactInquiry.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting inquiry:', error);
