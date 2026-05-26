@@ -19,6 +19,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [admin, setAdmin] = useState<any>(null);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
     // Check authentication
@@ -41,12 +42,23 @@ export default function AdminDashboard() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!res.ok) throw new Error('Failed to fetch stats');
-
         const data = await res.json();
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminData');
+            router.push('/admin/login');
+            return;
+          }
+
+          throw new Error(data.error || 'Gagal memuat statistik dashboard');
+        }
+
         setStats(data);
       } catch (error) {
         console.error('Error fetching stats:', error);
+        setLoadError(error instanceof Error ? error.message : 'Gagal memuat data');
       } finally {
         setLoading(false);
       }
@@ -115,11 +127,17 @@ export default function AdminDashboard() {
                 >
                   Pengaturan
                 </Link>
+                <Link
+                  href="/admin/admins"
+                  className="admin-btn admin-btn-primary text-center"
+                >
+                  Kelola Admin
+                </Link>
               </div>
             </div>
           </>
         ) : (
-          <div className="text-center py-8 text-red-600">Gagal memuat data</div>
+          <div className="text-center py-8 text-red-600">{loadError || 'Gagal memuat data'}</div>
         )}
       </div>
     </div>

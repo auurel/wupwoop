@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { randomBytes, createHash } from 'node:crypto';
 import { verify } from 'jsonwebtoken';
 
+const allowedRoles = ['admin', 'superadmin'] as const;
+
 function verifyToken(request: Request) {
   const authHeader = request.headers.get('authorization');
   const token = authHeader?.replace('Bearer ', '');
@@ -33,10 +35,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  if (tokenData.role !== 'superadmin') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-
   try {
     const invites = await prisma.adminInvite.findMany({
       orderBy: { createdAt: 'desc' },
@@ -65,15 +63,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  if (tokenData.role !== 'superadmin') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-
   try {
     const { email, name, role } = await request.json();
+    const normalizedRole = String(role || 'admin').toLowerCase();
 
     if (!email || !name) {
       return NextResponse.json({ error: 'Nama dan email harus diisi' }, { status: 400 });
+    }
+
+    if (!allowedRoles.includes(normalizedRole as (typeof allowedRoles)[number])) {
+      return NextResponse.json({ error: 'Role tidak valid' }, { status: 400 });
     }
 
     const existingAdmin = await prisma.admin.findUnique({ where: { email } });
@@ -94,14 +93,14 @@ export async function POST(request: Request) {
       create: {
         email,
         name,
-        role: role || 'admin',
+        role: normalizedRole,
         tokenHash: hashToken(rawToken),
         expiresAt,
         createdById: tokenData.id,
       },
       update: {
         name,
-        role: role || 'admin',
+        role: normalizedRole,
         tokenHash: hashToken(rawToken),
         expiresAt,
         usedAt: null,

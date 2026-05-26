@@ -12,6 +12,7 @@ import {
   Mail,
   UserCircle2,
   LogOut,
+  Users,
 } from 'lucide-react';
 
 const menuItems = [
@@ -22,6 +23,7 @@ const menuItems = [
   { label: 'Jam Operasional', href: '/admin/hours', icon: Clock },
   { label: 'Inquiries', href: '/admin/inquiries', icon: Mail },
   { label: 'Pengaturan', href: '/admin/settings', icon: Settings },
+  { label: 'Kelola Admin', href: '/admin/admins', icon: Users },
   { label: 'Profil Admin', href: '/admin/profile', icon: UserCircle2 },
 ];
 
