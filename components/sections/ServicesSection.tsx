@@ -118,7 +118,7 @@ export default function ServicesSection() {
                 key={service.id}
                 variants={itemVariants}
                 onClick={() => handleServiceClick(service.name)}
-                className="px-6 md:px-7 py-3 md:py-3.5 bg-cream-peach text-text-dark rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-soft active:scale-95"
+                className="px-3 md:px-6 py-2 md:py-3 bg-cream-peach text-text-dark rounded-full font-semibold text-xs md:text-sm transition-all duration-300 hover:scale-105 hover:shadow-soft active:scale-95"
               >
                 {service.name}
               </motion.button>

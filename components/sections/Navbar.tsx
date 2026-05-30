@@ -61,7 +61,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center gap-[clamp(18px,2.4vw,34px)]">
+          <div className="hidden md:flex items-center gap-[clamp(18px,2.4vw,34px)]">
             {navItems.map((item) => (
               <a
                 key={item.href}
@@ -76,7 +76,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
+            className="md:hidden p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >

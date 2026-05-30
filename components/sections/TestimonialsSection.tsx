@@ -94,7 +94,7 @@ export default function TestimonialsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="heading-section mb-4 text-left"
+            className="heading-section mb-2 text-left text-xl md:text-3xl"
           >
             Testimoni Pelanggan
           </motion.h2>
@@ -104,7 +104,7 @@ export default function TestimonialsSection() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-text-body mb-12 text-left"
+            className="text-text-body mb-8 md:mb-12 text-left text-sm md:text-base"
           >
             Dengarkan cerita dari pelanggan kami yang telah merasakan manfaatnya
           </motion.p>
@@ -120,20 +120,20 @@ export default function TestimonialsSection() {
               <motion.div
                 key={testimonial.id}
                 variants={itemVariants}
-                className="bg-cream rounded-2xl p-6 md:p-8 shadow-soft"
+                className="bg-cream rounded-2xl p-4 md:p-8 shadow-soft"
               >
                 {/* Rating */}
-                <div className="mb-4">
+                <div className="mb-3 md:mb-4">
                   <StarRating rating={testimonial.rating} />
                 </div>
 
                 {/* Message */}
-                <p className="text-text-body mb-6 leading-relaxed italic">
+                <p className="text-text-body mb-4 md:mb-6 leading-relaxed italic text-xs md:text-sm">
                   "{testimonial.message}"
                 </p>
 
                 {/* Customer Info */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 md:gap-4">
                   {testimonial.avatarUrl ? (
                     <img
                       src={testimonial.avatarUrl}

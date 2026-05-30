@@ -99,7 +99,7 @@ export default function ProductsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="heading-section text-center mb-12 md:mb-16"
+            className="heading-section text-center text-xl md:text-3xl mb-8 md:mb-16"
           >
             Potret Produk Kami
           </motion.h2>
@@ -109,22 +109,21 @@ export default function ProductsSection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-100px' }}
-            className="flex gap-4 md:gap-5 overflow-x-auto overflow-y-hidden pb-4 pr-1 snap-x snap-mandatory scroll-smooth cursor-grab active:cursor-grabbing"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            className="flex flex-col md:flex-row gap-4 md:gap-5 overflow-visible md:overflow-x-visible pb-4 pr-0"
           >
             {sortedProducts.map((product) => (
               <motion.div
                 key={product.id}
                 variants={itemVariants}
-                className="group snap-start flex-none w-[80%] sm:w-[45%] lg:w-[calc((100%-4.5rem)/4)] cursor-default"
+                className="group w-full md:flex-none md:w-[45%] lg:w-[calc((100%-4.5rem)/4)] cursor-default"
               >
-                <div className="relative aspect-[3/4] overflow-hidden rounded-3xl shadow-soft transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-md pointer-events-none">
+                <div className="relative aspect-[3/4] overflow-hidden rounded-3xl shadow-soft transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-md">
                   <Image
                     src={product.imageUrl}
                     alt={product.title}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 80vw, (max-width: 1024px) 45vw, 25vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 25vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>

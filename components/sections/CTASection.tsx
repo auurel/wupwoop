@@ -42,11 +42,11 @@ export default function CTASection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-2xl mx-auto space-y-6"
+          className="text-center max-w-2xl mx-auto space-y-3 md:space-y-6"
         >
-          <h2 className="heading-section">Tanya Lebih Lanjut</h2>
+          <h2 className="heading-section text-xl md:text-3xl">Tanya Lebih Lanjut</h2>
 
-          <p className="text-lg md:text-xl text-text-body leading-relaxed">
+          <p className="text-sm md:text-lg lg:text-xl text-text-body leading-relaxed">
             Ingin bertanya lebih banyak? Kami siap melayani anda, silahkan hubungi whatsapp kami
           </p>
 
@@ -54,7 +54,7 @@ export default function CTASection() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleWhatsAppClick}
-            className="px-10 py-4 bg-cream-peach text-text-dark rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-soft hover:animate-pulse-glow"
+            className="px-6 md:px-10 py-2 md:py-4 bg-cream-peach text-text-dark rounded-full font-semibold text-xs md:text-lg transition-all duration-300 hover:shadow-soft hover:animate-pulse-glow"
           >
             Klik Untuk Mengirim Pesan
           </motion.button>

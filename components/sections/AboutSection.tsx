@@ -5,12 +5,12 @@
 export default function AboutSection() {
   return (
     <section
-      className="relative bg-wave-full py-16 md:py-24 lg:py-32"
+      className="relative bg-wave-full py-8 md:py-24 lg:py-32"
       id="about-us"
     >
       <div className="w-[min(96vw,1600px)] mx-auto px-[clamp(12px,2vw,32px)]">
         <div
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12 lg:gap-16 items-center"
         >
           {/* Image */}
           <div className="flex justify-center">
@@ -28,10 +28,10 @@ export default function AboutSection() {
           </div>
 
           {/* Content */}
-          <div className="space-y-6 relative z-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#562F00]">Muzayyan</h2>
+          <div className="space-y-4 md:space-y-6 relative z-10">
+            <h2 className="text-2xl md:text-4xl font-bold text-[#562F00]">Muzayyan</h2>
 
-            <div className="space-y-4 text-justify leading-relaxed text-[#562F00] [font-family:'Poppins',sans-serif]">
+            <div className="space-y-3 md:space-y-4 text-left md:text-justify leading-relaxed text-[#562F00] text-sm md:text-base [font-family:'Poppins',sans-serif]">
               <p>
                 Muzayyan merupakan layanan jasa jahit dan penjualan produk ready to wear yang
                 berdiri sejak 1 maret 2017. Muzayyan menerima jasa jahit costum, seragam dan
