@@ -181,7 +181,7 @@ async function main() {
   // Seed SiteSettings
   await prisma.siteSettings.create({
     data: {
-      whatsappNumber: '6281223975431', // Update this
+      whatsappNumber: '6287889252965', // Update this
       defaultWhatsappMessage: 'Halo Muzayyan, saya ingin bertanya tentang layanan Anda',
       address: 'Jl Ahmad Yani No 83 Kebumen, Jawa Tengah',
       postalCode: '54311',

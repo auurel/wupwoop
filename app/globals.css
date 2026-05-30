@@ -44,6 +44,12 @@ video {
   display: block;
 }
 
+/* Touch helper: allow horizontal panning inside the element so swipes don't scroll the page */
+.touch-pan-x {
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch; /* momentum scrolling on iOS */
+}
+
 /* Prevent accidental horizontal scroll on small devices */
 @media (max-width: 640px) {
   html,
