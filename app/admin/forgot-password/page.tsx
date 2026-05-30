@@ -8,14 +8,12 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [mailtoLink, setMailtoLink] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setSuccess('');
-    setMailtoLink('');
 
     try {
       const res = await fetch('/api/admin/forgot-password', {
@@ -29,7 +27,6 @@ export default function ForgotPasswordPage() {
       if (!res.ok) throw new Error(data.error || 'Gagal memproses permintaan');
 
       setSuccess(data.message || 'Email terdaftar. Silakan cek email Anda.');
-      setMailtoLink(data.mailto || '');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Terjadi kesalahan');
     } finally {
@@ -52,16 +49,9 @@ export default function ForgotPasswordPage() {
         )}
 
         {success && (
-          <div className="mb-6 space-y-3 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm">
+          <div className="mb-6 space-y-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm">
             <p>{success}</p>
-            {mailtoLink && (
-              <a
-                href={mailtoLink}
-                className="inline-flex items-center justify-center w-full py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
-              >
-                Buka Email Terdaftar
-              </a>
-            )}
+            <p className="text-green-700">Jika belum masuk dalam 1-2 menit, cek folder Spam atau Promotions.</p>
           </div>
         )}
 

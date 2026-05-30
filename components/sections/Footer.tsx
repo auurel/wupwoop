@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { MapPin, Clock, Facebook, Instagram, Music } from 'lucide-react';
+import { fetchJSONWithTimeout } from '@/lib/utils';
 
 interface OperatingHours {
   day: string;
@@ -23,28 +24,53 @@ interface SiteSettings {
   facebookUsername?: string;
 }
 
+const fallbackHours: OperatingHours[] = [
+  { day: 'monday', dayLabel: 'Senin', openTime: '07:30', closeTime: '16:30', isClosed: false },
+  { day: 'tuesday', dayLabel: 'Selasa', openTime: '07:30', closeTime: '16:30', isClosed: false },
+  { day: 'wednesday', dayLabel: 'Rabu', openTime: '07:30', closeTime: '16:30', isClosed: false },
+  { day: 'thursday', dayLabel: 'Kamis', openTime: '07:30', closeTime: '16:30', isClosed: false },
+  { day: 'friday', dayLabel: "Jum'at", openTime: '07:30', closeTime: '16:30', isClosed: false },
+  { day: 'saturday', dayLabel: 'Sabtu', openTime: '07:30', closeTime: '16:30', isClosed: false },
+  { day: 'sunday', dayLabel: 'Minggu', openTime: '07:30', closeTime: '16:30', isClosed: false },
+];
+
+const fallbackSettings: SiteSettings = {
+  address: 'Jl Ahmad Yani No 83 Kebumen, Jawa Tengah',
+  postalCode: '54311',
+  mapEmbedUrl: '',
+  tiktokUsername: 'ruang_jahit_muzzayan',
+  instagramUsername: 'ruangjahitmuzzayan',
+  facebookUsername: 'Muzayyan Id',
+};
+
 export default function Footer() {
-  const [hours, setHours] = useState<OperatingHours[]>([]);
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [hours, setHours] = useState<OperatingHours[]>(fallbackHours);
+  const [settings, setSettings] = useState<SiteSettings | null>(fallbackSettings);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [hoursRes, settingsRes] = await Promise.all([
-          fetch('/api/operating-hours'),
-          fetch('/api/settings'),
+        const [hoursData, settingsData] = await Promise.all([
+          fetchJSONWithTimeout<OperatingHours[]>('/api/operating-hours', {
+            timeoutMs: 7000,
+            fallback: [],
+          }),
+          fetchJSONWithTimeout<SiteSettings | null>('/api/settings', {
+            timeoutMs: 7000,
+            fallback: {
+              address: 'Kebumen, Jawa Tengah',
+              postalCode: '',
+              mapEmbedUrl: '',
+            },
+          }),
         ]);
-
-        const hoursData = await hoursRes.json();
-        const settingsData = await settingsRes.json();
 
         setHours(hoursData);
         setSettings(settingsData);
       } catch (error) {
         console.error('Error fetching footer data:', error);
-      } finally {
-        setLoading(false);
+        setHours(fallbackHours);
+        setSettings(fallbackSettings);
       }
     };
 
@@ -59,10 +85,6 @@ export default function Footer() {
 
   const todayHours = getTodayHours();
   const isOpen = todayHours && !todayHours.isClosed;
-
-  if (loading) {
-    return <footer className="bg-cream-light text-text-dark py-12" />;
-  }
 
   return (
     <footer id="about-us" className="bg-cream-light text-text-dark">

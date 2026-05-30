@@ -105,10 +105,10 @@ h3 {
   background-image: url('/images/batik.svg');
   background-repeat: no-repeat;
   background-position: center top;
-  /* default: scale to full width while keeping 730px height so image won't tile or break */
-  background-size: 100% 730px;
-  height: 730px;
-  margin-bottom: 0; /* ensure no gap below hero */
+  /* default: scale to full width while keeping a comfortable hero ratio */
+  background-size: cover;
+  min-height: clamp(320px, 62svh, 730px);
+  margin-bottom: -1px; /* small overlap to avoid seam under hero */
 }
 
 /* For very wide screens, use the exact requested width to avoid upscaling artifacts */
@@ -190,6 +190,54 @@ h3 {
   }
 }
 
+@media (max-width: 768px) {
+  h1 {
+    font-size: clamp(1rem, 4vw, 1.45rem);
+    line-height: 1.06;
+  }
+
+  h2 {
+    font-size: clamp(0.95rem, 3.6vw, 1.2rem);
+    line-height: 1.1;
+  }
+
+  h3 {
+    font-size: 0.9rem;
+    line-height: 1.12;
+  }
+
+  p,
+  li,
+  a {
+    font-size: 0.76rem;
+    line-height: 1.42;
+  }
+
+  .hero-batik {
+    background-size: 158% auto;
+    background-position: center top;
+    min-height: 230px;
+  }
+
+  .bg-wave-full {
+    margin-top: -150px;
+    padding-top: 170px;
+    background-image: url('/images/wave-phones.svg');
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: 100% auto;
+  }
+
+  .about-text-panel {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 14px 0 20px;
+    min-height: auto;
+    box-shadow: none;
+  }
+}
+
 /* Original wave SVG element: place full original SVG inside sections without scaling or cropping */
 .wave-original {
   position: absolute;
@@ -209,16 +257,15 @@ h3 {
 .bg-wave-full {
   background-image: url('/images/wave.svg');
   background-repeat: no-repeat;
-  background-position: center 0px;
+  background-position: center top;
   /* make the wave full width while preserving its aspect ratio; fixed height 735px */
   background-size: 100% 735px;
   background-color: transparent !important;
   background-blend-mode: normal !important;
   background-attachment: scroll !important; /* scroll with section content */
   opacity: 1 !important; /* ensure fully opaque */
-  transition: none !important; /* prevent fade/animations */
-  margin-top: -90px; /* overlap with hero to show wave */
-  padding-top: 90px; /* push content down */
+  margin-top: -220px;
+  padding-top: 220px;
   position: relative;
   isolation: isolate;
 }
@@ -246,44 +293,33 @@ h3 {
   z-index: 1;
 }
 
-/* Prevent any hover/focus/active states or pseudo-element overlays from altering opacity */
-.bg-wave-full:hover,
-.bg-wave-full:focus,
-.bg-wave-full:active {
-  background-image: url('/images/wave.svg') !important;
-  opacity: 1 !important;
-  transition: none !important;
+@media (max-width: 1024px) {
+  .bg-wave-full {
+    margin-top: -100px;
+    padding-top: 100px;
+    background-position: center -95px;
+    background-size: 100% 480px;
+  }
 }
 
-.bg-wave-full::before {
-  display: none !important;
-  content: none !important;
-}
+@media (max-width: 768px) {
+  .bg-wave-full {
+    margin-top: -42px;
+    padding-top: 110px;
+    background-image: url('/images/wave-phones.svg');
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: 100vw auto;
+  }
 
-/* Ensure child elements are not affected by unexpected opacity/transition rules */
-.bg-wave-full * {
-  opacity: 1 !important;
-  transition: none !important;
-}
-
-/* Force-disable ALL animations/transitions/filters/transforms inside wave section */
-.bg-wave-full,
-.bg-wave-full * {
-  animation: none !important;
-  transition: none !important;
-  opacity: 1 !important;
-  filter: none !important;
-  transform: none !important;
-  will-change: auto !important;
-}
-
-/* Remove hover/focus/active effects completely */
-.bg-wave-full:hover,
-.bg-wave-full:focus,
-.bg-wave-full:active {
-  opacity: 1 !important;
-  filter: none !important;
-  transition: none !important;
+  .about-text-panel {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 8px 0 12px;
+    min-height: auto;
+    box-shadow: none;
+  }
 }
 
 /* Smooth Animations */

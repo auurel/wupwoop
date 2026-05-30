@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Poppins, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import SiteChrome from '@/components/layout/SiteChrome';
+import type { Viewport } from 'next';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -28,6 +29,11 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'id_ID',
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -29,6 +29,13 @@ DATABASE_URL="postgresql://user:password@host:5432/muzayyan"
 NEXTAUTH_SECRET="generate-dengan-openssl-rand-hex-32"
 NEXTAUTH_URL="http://localhost:3000"
 
+# Email SMTP (Gmail)
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_USER="your-email@gmail.com"
+SMTP_PASS="your-16-char-app-password"
+EMAIL_FROM="Muzayyan Admin <your-email@gmail.com>"
+
 # Admin seed
 SEED_ADMIN_EMAIL="admin@muzayyan.com"
 SEED_ADMIN_PASSWORD="Admin@123456"
@@ -167,8 +174,25 @@ verify(token, process.env.NEXTAUTH_SECRET);
 - `DATABASE_URL` - PostgreSQL connection string
 - `NEXTAUTH_SECRET` - Generate dengan: `openssl rand -hex 32`
 - `NEXTAUTH_URL` - Domain production (contoh: https://muzayyan.com)
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM` - SMTP untuk kirim email reset password admin
 - `CLOUDINARY_*` - Jika menggunakan Cloudinary
 - `NEXT_PUBLIC_WHATSAPP_NUMBER` - Nomor WhatsApp bisnis
+
+### Gmail SMTP (Forgot Password Admin)
+Untuk Gmail, wajib gunakan **App Password** (bukan password login Gmail biasa):
+1. Aktifkan 2-Step Verification di akun Google.
+2. Buka Google Account -> Security -> App passwords.
+3. Buat App Password baru (Mail) lalu copy value 16 karakter.
+4. Isi ke `SMTP_PASS` di `.env.local`.
+
+Contoh konfigurasi:
+```env
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_USER="your-email@gmail.com"
+SMTP_PASS="abcdefghijklmnop"
+EMAIL_FROM="Muzayyan Admin <your-email@gmail.com>"
+```
 
 ## Troubleshooting
 ### Database Connection Error

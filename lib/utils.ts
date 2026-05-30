@@ -71,3 +71,37 @@ export function getInitials(name: string): string {
 export function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+/**
+ * Fetch JSON with timeout and optional fallback for unstable networks.
+ */
+export async function fetchJSONWithTimeout<T>(
+  url: string,
+  options: RequestInit & { timeoutMs?: number; fallback?: T } = {}
+): Promise<T> {
+  const { timeoutMs = 7000, fallback, ...fetchOptions } = options;
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      ...fetchOptions,
+      signal: controller.signal,
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
+    return (await response.json()) as T;
+  } catch (error) {
+    if (fallback !== undefined) {
+      return fallback;
+    }
+
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}

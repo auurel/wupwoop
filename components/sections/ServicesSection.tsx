@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { generateWhatsAppLink, formatPhoneNumber } from '@/lib/utils';
+import { generateWhatsAppLink, formatPhoneNumber, fetchJSONWithTimeout } from '@/lib/utils';
 
 interface Service {
   id: string;
@@ -12,41 +11,33 @@ interface Service {
   order: number;
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5 },
-  },
-};
+const fallbackServices: Service[] = [
+  { id: 'fallback-1', name: 'Jahit Kebaya Custom', slug: 'jahit-kebaya-custom', order: 1 },
+  { id: 'fallback-2', name: 'Jahit Gamis Custom', slug: 'jahit-gamis-custom', order: 2 },
+  { id: 'fallback-3', name: 'Jahit Seragam Komunitas', slug: 'jahit-seragam-komunitas', order: 3 },
+  { id: 'fallback-4', name: 'Jahit Tunik', slug: 'jahit-tunik', order: 4 },
+  { id: 'fallback-5', name: 'Jahit Seragam Sekolah', slug: 'jahit-seragam-sekolah', order: 5 },
+  { id: 'fallback-6', name: 'Jahit Seragam Kerja', slug: 'jahit-seragam-kerja', order: 6 },
+  { id: 'fallback-7', name: 'Jasa Layanan Makloon', slug: 'jasa-layanan-makloon', order: 7 },
+];
 
 export default function ServicesSection() {
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [services, setServices] = useState<Service[]>(fallbackServices);
+  const [whatsappNumber, setWhatsappNumber] = useState('6281223975431');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [servicesRes, settingsRes] = await Promise.all([
-          fetch('/api/services'),
-          fetch('/api/settings'),
+        const [servicesData, settingsData] = await Promise.all([
+          fetchJSONWithTimeout<Service[]>('/api/services', {
+            timeoutMs: 7000,
+            fallback: fallbackServices,
+          }),
+          fetchJSONWithTimeout<{ whatsappNumber?: string }>('/api/settings', {
+            timeoutMs: 7000,
+            fallback: {},
+          }),
         ]);
-
-        const servicesData = await servicesRes.json();
-        const settingsData = await settingsRes.json();
 
         setServices(servicesData);
         if (settingsData.whatsappNumber) {
@@ -54,8 +45,8 @@ export default function ServicesSection() {
         }
       } catch (error) {
         console.error('Error fetching services:', error);
-      } finally {
-        setLoading(false);
+        setServices(fallbackServices);
+        setWhatsappNumber('6281223975431');
       }
     };
 
@@ -76,54 +67,26 @@ export default function ServicesSection() {
     window.open(link, '_blank');
   };
 
-  if (loading) {
-    return (
-      <section className="section-padding bg-cream-light" id="services">
-        <div className="section-container">
-          <div className="h-12 w-80 bg-cream rounded-lg skeleton mx-auto mb-8" />
-          <div className="flex flex-wrap gap-4 justify-center">
-            {[...Array(7)].map((_, i) => (
-              <div key={i} className="h-10 w-32 bg-cream rounded-full skeleton" />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="section-padding bg-cream-light" id="services">
       <div className="section-container">
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="heading-section text-center mb-12 md:mb-16"
-        >
+        <h2 className="heading-section text-center mb-12 md:mb-16">
           Kami Melayani Jasa
-        </motion.h2>
+        </h2>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          className="flex flex-wrap gap-3 md:gap-4 justify-center"
-        >
+        <div className="flex flex-wrap gap-3 md:gap-4 justify-center">
           {services
             .sort((a, b) => a.order - b.order)
             .map((service) => (
-              <motion.button
+              <button
                 key={service.id}
-                variants={itemVariants}
                 onClick={() => handleServiceClick(service.name)}
                 className="px-6 md:px-7 py-3 md:py-3.5 bg-cream-peach text-text-dark rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-soft active:scale-95"
               >
                 {service.name}
-              </motion.button>
+              </button>
             ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

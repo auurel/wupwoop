@@ -1,64 +1,27 @@
 'use client';
 
-import { motion } from 'framer-motion';
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: 'easeOut' },
-  },
-};
-
 export default function HeroSection() {
   return (
     <section
-      className="relative h-[730px] flex items-center justify-center pb-20 hero-batik"
+      className="relative min-h-0 sm:min-h-[620px] lg:min-h-[730px] flex items-start sm:items-center justify-center pt-12 sm:pt-0 pb-0 sm:pb-20 hero-batik"
       id="hero"
     >
       {/* Batik background applied via CSS (.hero-batik) */}
       <div className="w-[min(96vw,1600px)] mx-auto px-[clamp(12px,2vw,32px)]">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="flex flex-col items-center justify-center text-center w-full"
-        >
+        <div className="flex flex-col items-center justify-center text-center w-full py-1 sm:py-0">
           {/* Main Heading */}
-          <motion.h1
-            variants={itemVariants}
-            className="text-4xl md:text-5xl lg:text-6xl font-serif italic text-text-dark mb-6 md:mb-8 max-w-3xl font-flamante"
-          >
+          <h1 className="text-[clamp(1.05rem,3.8vw,3rem)] sm:text-4xl md:text-5xl lg:text-6xl font-serif italic text-text-dark text-center text-balance mb-2 sm:mb-8 max-w-[88vw] sm:max-w-3xl font-flamante leading-[1.02] sm:leading-tight">
             Wujudkan Pakaian Impian Anda
-          </motion.h1>
+          </h1>
 
           {/* Subheading */}
-          <motion.p
-            variants={itemVariants}
-            className="text-lg md:text-xl text-text-body max-w-2xl leading-relaxed font-nunito"
-          >
+          <p className="text-[0.68rem] sm:text-lg md:text-xl text-text-body max-w-[88vw] sm:max-w-2xl leading-5 sm:leading-relaxed font-nunito text-center text-balance">
             Solusi jahit gamis, koko, dan seragam terpercaya. Pengerjaan tepat waktu dengan kualitas
             jahitan kelas atas yang membuat Anda tampil lebih percaya diri.
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
       </div>
 
-      {/* Wavy Divider */}
-      <div className="absolute bottom-0 left-0 right-0 wavy-divider" />
-      {/* Fixed wave under the hero to visually separate sections */}
-      <div className="hero-wave" aria-hidden />
     </section>
   );
 }

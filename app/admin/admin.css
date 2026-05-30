@@ -15,6 +15,14 @@
   background: var(--color-cream-light);
 }
 
+.admin-mobile-topbar {
+  display: none;
+}
+
+.admin-mobile-overlay {
+  display: none;
+}
+
 .admin-sidebar {
   background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-cream-peach) 100%);
   color: var(--color-text-dark);
@@ -26,6 +34,17 @@
   height: 100vh;
   overflow-y: auto;
   box-shadow: 2px 0 8px rgba(61, 40, 23, 0.1);
+}
+
+.admin-sidebar-inner {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sidebar-logout {
+  margin-top: auto;
+  margin-bottom: 1.25rem;
 }
 
 .admin-main {
@@ -273,20 +292,81 @@
   margin-top: 0.5rem;
 }
 
+@media (max-width: 1024px) {
+  .admin-main {
+    padding: 1.5rem;
+  }
+
+  .admin-header {
+    padding: 1rem 1.25rem;
+  }
+}
+
 @media (max-width: 768px) {
-  .admin-container {
-    grid-template-columns: 1fr;
+  .admin-mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-cream-peach) 100%);
+    border-bottom: 1px solid rgba(61, 40, 23, 0.08);
+  }
+
+  .admin-mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    background: rgba(0, 0, 0, 0.35);
+    border: none;
   }
 
   .admin-sidebar {
-    position: relative;
-    width: 100%;
-    height: auto;
-    border-bottom: 2px solid var(--color-primary);
-    border-right: none;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: min(82vw, 320px);
+    z-index: 50;
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+    padding: 1.25rem 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .admin-sidebar.open {
+    transform: translateX(0);
   }
 
   .admin-main {
     margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .admin-header {
+    padding: 0.875rem 1rem;
+    margin-bottom: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .admin-header > div:last-child {
+    width: 100%;
+    text-align: left;
+  }
+
+  .admin-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .admin-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
   }
 }

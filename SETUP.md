@@ -42,6 +42,12 @@ postgresql://postgres:password@localhost:5432/muzayyan
 3. Copy PostgreSQL connection string
 4. Format: `postgresql://postgres.xxxxx:password@db.xxxxx.supabase.co:5432/postgres`
 
+#### Gmail SMTP Setup (Untuk Forgot Password)
+1. Aktifkan **2-Step Verification** pada akun Google pengirim.
+2. Buka Google Account -> Security -> **App passwords**.
+3. Generate App Password untuk Mail.
+4. Simpan App Password 16 karakter tersebut ke `SMTP_PASS`.
+
 ### 3️⃣ Project Setup
 
 ```bash
@@ -56,7 +62,15 @@ cp .env.example .env.local
 # 3. Edit .env.local dengan:
 # - DATABASE_URL (lihat tahap 2)
 # - NEXTAUTH_SECRET (dari openssl rand -hex 32)
+# - SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, EMAIL_FROM
 # - SEED_ADMIN_EMAIL & PASSWORD
+
+# Contoh SMTP Gmail:
+# SMTP_HOST="smtp.gmail.com"
+# SMTP_PORT="587"
+# SMTP_USER="your-email@gmail.com"
+# SMTP_PASS="your-16-char-app-password"
+# EMAIL_FROM="Muzayyan Admin <your-email@gmail.com>"
 
 # 4. Setup database
 npm run db:push
@@ -187,6 +201,7 @@ Sebelum production:
 - [ ] Change `NEXTAUTH_SECRET` ke random string yang aman
 - [ ] Update `SEED_ADMIN_PASSWORD` ke password yang kuat
 - [ ] Set `NEXTAUTH_URL` ke domain production
+- [ ] Set SMTP (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM`) untuk email reset password
 - [ ] Enable HTTPS pada hosting
 - [ ] Setup rate limiting untuk login
 - [ ] Enable CORS dengan whitelist domain
