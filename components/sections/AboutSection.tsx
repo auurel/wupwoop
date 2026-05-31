@@ -1,19 +1,17 @@
 'use client';
 
-// Animations removed: no fade-in/fade-out effects
-
 export default function AboutSection() {
   return (
     <section
-      className="relative bg-wave-full py-8 md:py-24 lg:py-32"
+      // PERBAIKAN: Menggunakan pt-36 agar konten aman di bawah wave, dan memastikan class bg-wave-full terender
+      className="relative bg-wave-full pt-36 pb-8 md:py-24 lg:py-32 w-full block"
       id="about-us"
     >
       <div className="w-[min(96vw,1600px)] mx-auto px-[clamp(12px,2vw,32px)]">
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12 lg:gap-16 items-center"
-        >
-          {/* Image */}
-          <div className="flex justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12 lg:gap-16 items-center w-full">
+          
+          {/* Bagian Gambar */}
+          <div className="flex justify-center w-full">
             <div className="relative w-full max-w-xs sm:max-w-md md:max-w-md lg:max-w-lg z-0">
               <div className="overflow-hidden rounded-3xl">
                 <img
@@ -21,14 +19,14 @@ export default function AboutSection() {
                   alt="Muzayyan - Jahit Custom"
                   width={1100}
                   height={720}
-                  className="w-full h-auto object-contain"
+                  className="w-full h-auto object-contain block"
                 />
               </div>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="space-y-4 md:space-y-6 relative z-10">
+          {/* Bagian Konten Teks */}
+          <div className="space-y-4 md:space-y-6 relative z-10 w-full block">
             <h2 className="text-2xl md:text-4xl font-bold text-[#562F00]">Muzayyan</h2>
 
             <div className="space-y-3 md:space-y-4 text-left md:text-justify leading-relaxed text-[#562F00] text-sm md:text-base [font-family:'Poppins',sans-serif]">
@@ -46,6 +44,7 @@ export default function AboutSection() {
               </p>
             </div>
           </div>
+
         </div>
       </div>
     </section>

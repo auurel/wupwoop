@@ -10,7 +10,6 @@ interface Stats {
   totalProducts: number;
   totalServices: number;
   pendingTestimonials: number;
-  newInquiries: number;
   approvedTestimonials: number;
 }
 
@@ -92,10 +91,6 @@ export default function AdminDashboard() {
               <div className="admin-stat">
                 <div className="admin-stat-number">{stats.pendingTestimonials}</div>
                 <div className="admin-stat-label">Testimoni Menunggu</div>
-              </div>
-              <div className="admin-stat">
-                <div className="admin-stat-number">{stats.newInquiries}</div>
-                <div className="admin-stat-label">Inquiries Baru</div>
               </div>
             </div>
 

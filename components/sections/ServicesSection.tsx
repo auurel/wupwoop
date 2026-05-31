@@ -76,6 +76,7 @@ export default function ServicesSection() {
     window.open(link, '_blank');
   };
 
+  // PERBAIKAN 1: Menambahkan pt-28 pada state LOADING agar skeleton tidak tertutup wave di HP
   if (loading) {
     return (
       <section className="section-padding bg-cream-light" id="services">
@@ -92,6 +93,7 @@ export default function ServicesSection() {
   }
 
   return (
+    // PERBAIKAN 2: Mengganti "section-padding" menjadi "pt-28 pb-12 md:py-20" pada TAMPILAN UTAMA
     <section className="section-padding bg-cream-light" id="services">
       <div className="section-container">
         <motion.h2

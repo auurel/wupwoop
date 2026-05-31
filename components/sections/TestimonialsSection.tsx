@@ -149,7 +149,6 @@ export default function TestimonialsSection() {
                     <p className="font-semibold text-text-dark">
                       {testimonial.customerName}
                     </p>
-                    <p className="text-sm text-text-body">Pelanggan setia</p>
                   </div>
                 </div>
               </motion.div>

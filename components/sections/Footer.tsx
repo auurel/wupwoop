@@ -51,15 +51,6 @@ export default function Footer() {
     fetchData();
   }, []);
 
-  const getTodayHours = () => {
-    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const today = days[new Date().getDay()];
-    return hours.find((h) => h.day === today);
-  };
-
-  const todayHours = getTodayHours();
-  const isOpen = todayHours && !todayHours.isClosed;
-
   if (loading) {
     return <footer className="bg-cream-light text-text-dark py-12" />;
   }
@@ -91,11 +82,6 @@ export default function Footer() {
                 ))}
               </div>
 
-              {isOpen && (
-                <div className="mt-6 p-3 bg-green-100 rounded-lg text-green-700 text-sm font-semibold text-center">
-                  ✓ Buka Sekarang
-                </div>
-              )}
             </div>
 
             {/* Contact & Social Media */}

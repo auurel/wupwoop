@@ -405,6 +405,10 @@ a:focus-visible {
 
 /* Mobile-specific: responsive layout fixes for mobile phones */
 @media (max-width: 768px) {
+  .hero-content {
+    transform: translateY(-72px);
+  }
+
   .hero-batik {
     background-size: cover;
     background-position: center 8%;
@@ -427,9 +431,32 @@ a:focus-visible {
   /* Mobile fixes: use inline SVG in hero for precise overlap; disable section-level wave to avoid duplication */
   .bg-wave-full {
     background-image: none !important;
-    margin-top: 0 !important;
+    position: relative;
+    z-index: 5;
+    margin-top: -292px !important;
     padding-top: 0 !important;
+  }
+
+  .bg-wave-full:hover,
+  .bg-wave-full:focus,
+  .bg-wave-full:active {
+    background-image: none !important;
+    background-repeat: no-repeat !important;
+    background-position: top center !important;
     background-size: auto !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  #about-us .flex.justify-center {
+    margin-top: 28px;
+  }
+
+  .bg-wave-full::after {
+    display: none !important;
+    content: none !important;
   }
 
   /* Also disable any generic .bg-wave or .wave-original that might render a top wave */
@@ -457,11 +484,10 @@ a:focus-visible {
     pointer-events: none;
   }
 
-  /* Completely hide all waves on mobile when user requests removal */
+  /* Keep the About section visible on mobile; hide only decorative wave layers */
   .hero-mobile-wave,
   .wavy-divider,
   .bg-wave,
-  .bg-wave-full,
   .wave-original {
     display: none !important;
     background-image: none !important;
