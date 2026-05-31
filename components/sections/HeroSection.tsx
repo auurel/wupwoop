@@ -25,7 +25,7 @@ const itemVariants = {
 export default function HeroSection() {
   return (
     <section
-      className="relative min-h-[640px] md:h-[730px] flex items-center justify-center pb-8 md:pb-20 hero-batik"
+      className="relative min-h-[580px] md:h-[730px] flex items-center justify-center pb-8 md:pb-20 hero-batik"
       id="hero"
     >
       {/* Batik background applied via CSS (.hero-batik) */}
@@ -62,7 +62,7 @@ export default function HeroSection() {
       <img
         src="/images/wave-phones.svg"
         alt="wave"
-        className="hero-mobile-wave pointer-events-none md:hidden absolute left-0 right-0 bottom-0 w-full h-auto"
+        className="hero-mobile-wave pointer-events-none md:hidden absolute left-0 right-0 bottom-0 w-full h-auto translate-y-[64px] scale-y-125 transform origin-bottom"
         style={{ zIndex: 1 }}
       />
 
