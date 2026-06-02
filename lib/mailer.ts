@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer';
 type SendAdminForgotPasswordEmailParams = {
   to: string;
   adminName?: string | null;
-  otp: string;
+  resetUrl: string;
 };
 
 function getTransporter() {
@@ -27,7 +27,7 @@ function getTransporter() {
   });
 }
 
-export async function sendAdminForgotPasswordEmail({ to, otp, adminName }: SendAdminForgotPasswordEmailParams) {
+export async function sendAdminForgotPasswordEmail({ to, resetUrl, adminName }: SendAdminForgotPasswordEmailParams) {
   const from = process.env.EMAIL_FROM || process.env.SMTP_USER;
 
   if (!from) {
@@ -40,29 +40,30 @@ export async function sendAdminForgotPasswordEmail({ to, otp, adminName }: SendA
   await transporter.sendMail({
     from,
     to,
-    subject: 'Kode OTP Reset Password Admin Muzayyan',
+    subject: 'Reset Password Admin Muzayyan',
     text: [
       `Halo ${displayName},`,
       '',
       'Kami menerima permintaan reset password untuk akun admin Anda.',
-      `Kode OTP Anda: ${otp}`,
+      'Gunakan tautan berikut untuk mengatur ulang password:',
+      resetUrl,
       '',
-      'Kode ini berlaku selama 10 menit.',
-      '',
-      'Masukkan kode ini di halaman reset password untuk mengatur ulang password.',
+      'Tautan ini berlaku selama 30 menit.',
       '',
       'Jika Anda tidak meminta reset password, abaikan email ini.',
+      '',
     ].join('\n'),
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937;">
         <p>Halo ${displayName},</p>
         <p>Kami menerima permintaan reset password untuk akun admin Anda.</p>
         <p>
-          Kode OTP Anda:
+          <a href="${resetUrl}" style="display:inline-block;background:#f97316;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:600;">
+            Reset Password Sekarang
+          </a>
         </p>
-        <p style="font-size:24px;font-weight:700;letter-spacing:4px;background:#fff7ed;display:inline-block;padding:12px 18px;border-radius:10px;border:1px dashed #fb923c;">${otp}</p>
-        <p>Kode ini berlaku selama 10 menit.</p>
-        <p>Masukkan kode ini di halaman reset password untuk mengatur ulang password.</p>
+        <p style="word-break:break-all;">Atau buka tautan ini: <a href="${resetUrl}">${resetUrl}</a></p>
+        <p>Tautan ini berlaku selama 30 menit.</p>
         <p>Jika Anda tidak meminta reset password, abaikan email ini.</p>
       </div>
     `,

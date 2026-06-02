@@ -6,9 +6,7 @@ import { useSearchParams } from 'next/navigation';
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
-  const initialEmail = useMemo(() => searchParams.get('email') || '', [searchParams]);
-  const [email, setEmail] = useState(initialEmail);
-  const [otp, setOtp] = useState('');
+  const token = useMemo(() => searchParams.get('token') || '', [searchParams]);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,7 +29,7 @@ function ResetPasswordForm() {
       const res = await fetch('/api/admin/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp, password }),
+        body: JSON.stringify({ token, password }),
       });
 
       const data = await res.json();
@@ -53,8 +51,14 @@ function ResetPasswordForm() {
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Reset Password</h1>
-          <p className="text-gray-600 mt-2">Masukkan email dan kode OTP yang dikirim ke Gmail Anda.</p>
+          <p className="text-gray-600 mt-2">Buat password baru untuk akun admin Anda.</p>
         </div>
+
+        {!token && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            Token reset tidak ditemukan. Silakan minta link reset baru.
+          </div>
+        )}
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
@@ -69,33 +73,6 @@ function ResetPasswordForm() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email Admin</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-              placeholder="admin@muzayyan.com"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Kode OTP</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={6}
-              required
-              value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 tracking-[0.3em] text-center"
-              placeholder="123456"
-            />
-          </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
             <input
@@ -122,7 +99,7 @@ function ResetPasswordForm() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !token}
             className="w-full py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Menyimpan...' : 'Reset Password'}

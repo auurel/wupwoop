@@ -1,14 +1,9 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-import { randomInt } from 'crypto';
-import bcrypt from 'bcryptjs';
+import { sign } from 'jsonwebtoken';
 import { sendAdminForgotPasswordEmail } from '@/lib/mailer';
 
 export const runtime = 'nodejs';
-
-function generateOtp() {
-  return String(randomInt(100000, 1000000));
-}
 
 export async function POST(request: Request) {
   try {
@@ -24,27 +19,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email tidak terdaftar' }, { status: 404 });
     }
 
-    const otp = generateOtp();
-    const resetOtpHash = await bcrypt.hash(otp, 10);
-    const resetOtpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    const token = sign(
+      { id: admin.id, email: admin.email, purpose: 'reset-password' },
+      process.env.NEXTAUTH_SECRET || 'your-secret-key',
+      { expiresIn: '30m' }
+    );
 
-    await prisma.admin.update({
-      where: { id: admin.id },
-      data: {
-        resetOtpHash,
-        resetOtpExpiresAt,
-      },
-    });
+    const resetUrl = `${request.headers.get('origin') || 'http://localhost:3000'}/admin/reset-password?token=${encodeURIComponent(token)}`;
 
     await sendAdminForgotPasswordEmail({
       to: admin.email,
       adminName: admin.name,
-      otp,
+      resetUrl,
     });
 
     return NextResponse.json({
-      message: 'Kode OTP reset password sudah dikirim ke inbox admin.',
+      message: 'Email reset password sudah dikirim ke inbox admin.',
       email: admin.email,
+      resetUrl,
     });
   } catch (error) {
     console.error('Forgot password error:', error);

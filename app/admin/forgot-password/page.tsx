@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
 
       if (!res.ok) throw new Error(data.error || 'Gagal memproses permintaan');
 
-      setSuccess(data.message || 'Kode OTP reset password sudah dikirim. Silakan cek inbox Anda.');
+      setSuccess(data.message || 'Email reset password sudah dikirim. Silakan cek inbox Anda.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Terjadi kesalahan');
     } finally {
@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Lupa Password</h1>
-          <p className="text-gray-600 mt-2">Masukkan email admin yang terdaftar untuk menerima kode OTP lewat Gmail.</p>
+          <p className="text-gray-600 mt-2">Masukkan email admin yang terdaftar untuk menerima link reset password lewat Gmail.</p>
         </div>
 
         {error && (
@@ -72,7 +72,7 @@ export default function ForgotPasswordPage() {
             disabled={loading}
             className="w-full py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Memproses...' : 'Kirim OTP'}
+            {loading ? 'Memproses...' : 'Kirim Email Reset'}
           </button>
         </form>
 
