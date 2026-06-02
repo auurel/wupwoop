@@ -87,13 +87,15 @@ model SiteSettings {
 }
 
 model Admin {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  password  String
-  name      String
-  role      String    @default("admin")
-  createdAt DateTime  @default(now())
-  lastLogin DateTime?
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  password           String
+  name               String
+  role               String    @default("admin")
+  resetOtpHash       String?
+  resetOtpExpiresAt  DateTime?
+  createdAt          DateTime   @default(now())
+  lastLogin          DateTime?
 
   @@map("admins")
 }

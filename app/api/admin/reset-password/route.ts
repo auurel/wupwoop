@@ -1,42 +1,56 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-import { verify } from 'jsonwebtoken';
 import { hashPassword } from '@/lib/auth';
+import bcrypt from 'bcryptjs';
 
-type ResetTokenPayload = {
-  id: string;
+export const runtime = 'nodejs';
+
+type ResetOtpPayload = {
   email: string;
-  purpose?: string;
+  otp: string;
+  password: string;
 };
 
 export async function POST(request: Request) {
   try {
-    const { token, password } = await request.json();
+    const { email, otp, password } = (await request.json()) as ResetOtpPayload;
 
-    if (!token || !password) {
-      return NextResponse.json({ error: 'Token dan password harus diisi' }, { status: 400 });
+    if (!email || !otp || !password) {
+      return NextResponse.json({ error: 'Email, OTP, dan password harus diisi' }, { status: 400 });
     }
 
-    const payload = verify(token, process.env.NEXTAUTH_SECRET || 'your-secret-key') as ResetTokenPayload;
+    const admin = await prisma.admin.findUnique({ where: { email } });
 
-    if (!payload || payload.purpose !== 'reset-password') {
-      return NextResponse.json({ error: 'Token tidak valid' }, { status: 400 });
-    }
-
-    const admin = await prisma.admin.findUnique({ where: { id: payload.id } });
-
-    if (!admin || admin.email !== payload.email) {
+    if (!admin) {
       return NextResponse.json({ error: 'Akun admin tidak ditemukan' }, { status: 404 });
+    }
+
+    if (!admin.resetOtpHash || !admin.resetOtpExpiresAt) {
+      return NextResponse.json({ error: 'OTP reset belum diminta' }, { status: 400 });
+    }
+
+    if (admin.resetOtpExpiresAt.getTime() < Date.now()) {
+      return NextResponse.json({ error: 'OTP sudah kedaluwarsa' }, { status: 400 });
+    }
+
+    const isOtpValid = await bcrypt.compare(otp, admin.resetOtpHash);
+
+    if (!isOtpValid) {
+      return NextResponse.json({ error: 'OTP tidak valid' }, { status: 400 });
     }
 
     await prisma.admin.update({
       where: { id: admin.id },
-      data: { password: await hashPassword(password) },
+      data: {
+        password: await hashPassword(password),
+        resetOtpHash: null,
+        resetOtpExpiresAt: null,
+      },
     });
 
     return NextResponse.json({ message: 'Password berhasil direset' });
   } catch (error) {
     console.error('Reset password error:', error);
-    return NextResponse.json({ error: 'Token tidak valid atau sudah kedaluwarsa' }, { status: 400 });
+    return NextResponse.json({ error: 'Gagal mereset password' }, { status: 400 });
   }
 }
