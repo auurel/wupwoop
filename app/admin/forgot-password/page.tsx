@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Lupa Password</h1>
-          <p className="text-gray-600 mt-2">Masukkan email admin yang terdaftar untuk menerima link reset password lewat Gmail.</p>
+          <p className="text-gray-600 mt-2">Masukkan email admin yang terdaftar untuk menerima link reset password.</p>
         </div>
 
         {error && (

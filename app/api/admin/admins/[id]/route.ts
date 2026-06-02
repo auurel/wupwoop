@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAdminToken } from '@/lib/admin-auth';
 import { hashPassword } from '@/lib/auth';
+import { syncSupabaseAdminUser } from '@/lib/supabase-auth';
 
 const allowedRoles = ['admin', 'superadmin'] as const;
 
@@ -74,6 +75,13 @@ export async function PUT(request: Request, { params }: RouteContext) {
         createdAt: true,
         lastLogin: true,
       },
+    });
+
+    await syncSupabaseAdminUser({
+      email: updated.email,
+      name: updated.name,
+      password: password && password.length > 0 ? password : undefined,
+      createIfMissing: true,
     });
 
     return NextResponse.json(updated);

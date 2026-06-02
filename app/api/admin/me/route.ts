@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { verify, sign } from 'jsonwebtoken';
 import { verifyPassword, hashPassword } from '@/lib/auth';
+import { syncSupabaseAdminUser } from '@/lib/supabase-auth';
 
 function verifyToken(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -107,6 +108,13 @@ export async function PUT(request: Request) {
         createdAt: true,
         lastLogin: true,
       },
+    });
+
+    await syncSupabaseAdminUser({
+      email: updated.email,
+      name: updated.name,
+      password: passwordChanged ? body.newPassword : undefined,
+      createIfMissing: true,
     });
 
     return NextResponse.json({

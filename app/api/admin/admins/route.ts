@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAdminToken } from '@/lib/admin-auth';
 import { hashPassword } from '@/lib/auth';
+import { syncSupabaseAdminUser } from '@/lib/supabase-auth';
 
 const allowedRoles = ['admin', 'superadmin'] as const;
 
@@ -82,6 +83,13 @@ export async function POST(request: Request) {
         createdAt: true,
         lastLogin: true,
       },
+    });
+
+    await syncSupabaseAdminUser({
+      email: admin.email,
+      name: admin.name,
+      password,
+      createIfMissing: true,
     });
 
     return NextResponse.json(admin, { status: 201 });

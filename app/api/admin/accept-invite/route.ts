@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { createHash } from 'node:crypto';
 import { hashPassword } from '@/lib/auth';
+import { syncSupabaseAdminUser } from '@/lib/supabase-auth';
 
 function hashToken(token: string) {
   return createHash('sha256').update(token).digest('hex');
@@ -40,6 +41,13 @@ export async function POST(request: Request) {
         name: true,
         role: true,
       },
+    });
+
+    await syncSupabaseAdminUser({
+      email: admin.email,
+      name: admin.name,
+      password,
+      createIfMissing: true,
     });
 
     await prisma.adminInvite.update({

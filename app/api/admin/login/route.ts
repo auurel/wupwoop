@@ -1,6 +1,8 @@
-import { authenticateAdmin } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
+import { prisma } from '@/lib/prisma';
+import { authenticateAdmin } from '@/lib/auth';
+import { getSupabaseAnonServerClient, syncSupabaseAdminUser } from '@/lib/supabase-auth';
 
 export async function POST(request: Request) {
   try {
@@ -13,13 +15,35 @@ export async function POST(request: Request) {
       );
     }
 
-    const admin = await authenticateAdmin(email, password);
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const supabase = getSupabaseAnonServerClient();
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email: normalizedEmail,
+      password,
+    });
+
+    let admin = null;
+
+    if (authData.user && !authError) {
+      admin = await prisma.admin.findUnique({ where: { email: normalizedEmail } });
+    }
 
     if (!admin) {
-      return NextResponse.json(
-        { error: 'Email atau password salah' },
-        { status: 401 }
-      );
+      admin = await authenticateAdmin(normalizedEmail, password);
+
+      if (!admin) {
+        return NextResponse.json(
+          { error: 'Email atau password salah' },
+          { status: 401 }
+        );
+      }
+
+      await syncSupabaseAdminUser({
+        email: admin.email,
+        name: admin.name,
+        password,
+        createIfMissing: true,
+      });
     }
 
     // Generate JWT token
