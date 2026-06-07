@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getSupabaseBrowserClient } from '@/lib/supabase-auth';
+import PasswordField from '@/components/admin/PasswordField';
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -83,29 +84,25 @@ function ResetPasswordForm() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-              placeholder="••••••••"
-            />
-          </div>
+          <PasswordField
+            label="Password Baru"
+            required
+            value={password}
+            onChange={setPassword}
+            placeholder="••••••••"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+            autoComplete="new-password"
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password</label>
-            <input
-              type="password"
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-              placeholder="••••••••"
-            />
-          </div>
+          <PasswordField
+            label="Konfirmasi Password"
+            required
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+            placeholder="••••••••"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+            autoComplete="new-password"
+          />
 
           <button
             type="submit"

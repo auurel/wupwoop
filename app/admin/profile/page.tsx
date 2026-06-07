@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
+import PasswordField from '@/components/admin/PasswordField';
 
 type AdminProfile = {
   id: string;
@@ -127,50 +128,46 @@ export default function AdminProfilePage() {
               {message && <div className="mb-4 bg-green-100 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">{message}</div>}
 
               <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="admin-form-label">Username / Nama Admin</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                  className="admin-input"
-                  placeholder="Nama admin"
-                />
-              </div>
-
-              <div>
-                <label className="admin-form-label">Email</label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                  className="admin-input"
-                  placeholder="admin@muzayyan.com"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="admin-form-label">Password Saat Ini</label>
+                  <label className="admin-form-label">Username / Nama Admin</label>
                   <input
-                    type="password"
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                    className="admin-input"
+                    placeholder="Nama admin"
+                  />
+                </div>
+
+                <div>
+                  <label className="admin-form-label">Email</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                    className="admin-input"
+                    placeholder="admin@muzayyan.com"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <PasswordField
+                    label="Password Saat Ini"
                     value={formData.currentPassword}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, currentPassword: e.target.value }))}
-                    className="admin-input"
+                    onChange={(value) => setFormData((prev) => ({ ...prev, currentPassword: value }))}
                     placeholder="••••••••"
-                  />
-                </div>
-                <div>
-                  <label className="admin-form-label">Password Baru</label>
-                  <input
-                    type="password"
-                    value={formData.newPassword}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, newPassword: e.target.value }))}
                     className="admin-input"
+                    autoComplete="current-password"
+                  />
+                  <PasswordField
+                    label="Password Baru"
+                    value={formData.newPassword}
+                    onChange={(value) => setFormData((prev) => ({ ...prev, newPassword: value }))}
                     placeholder="Isi jika ingin ganti password"
+                    className="admin-input"
+                    autoComplete="new-password"
                   />
                 </div>
-              </div>
 
               <div className="flex gap-3">
                 <button

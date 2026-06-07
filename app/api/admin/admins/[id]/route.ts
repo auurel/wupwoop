@@ -48,6 +48,10 @@ export async function PUT(request: Request, { params }: RouteContext) {
       return NextResponse.json({ error: 'Role tidak valid' }, { status: 400 });
     }
 
+    if (role !== undefined && tokenData.role !== 'superadmin') {
+      return NextResponse.json({ error: 'Hanya superadmin yang dapat mengubah role admin' }, { status: 403 });
+    }
+
     if (password !== undefined && password.length > 0 && password.length < 8) {
       return NextResponse.json({ error: 'Password minimal 8 karakter' }, { status: 400 });
     }
@@ -105,16 +109,17 @@ export async function DELETE(request: Request, { params }: RouteContext) {
       return NextResponse.json({ error: 'Tidak bisa menghapus akun sendiri' }, { status: 400 });
     }
 
+    if (tokenData.role === 'admin') {
+      return NextResponse.json({ error: 'Role admin tidak memiliki izin untuk menghapus admin' }, { status: 403 });
+    }
+
     const targetAdmin = await prisma.admin.findUnique({ where: { id } });
     if (!targetAdmin) {
       return NextResponse.json({ error: 'Admin tidak ditemukan' }, { status: 404 });
     }
 
     if (targetAdmin.role === 'superadmin') {
-      const totalSuperadmins = await prisma.admin.count({ where: { role: 'superadmin' } });
-      if (totalSuperadmins <= 1) {
-        return NextResponse.json({ error: 'Minimal harus ada 1 superadmin aktif' }, { status: 400 });
-      }
+      return NextResponse.json({ error: 'Superadmin tidak dapat menghapus superadmin lain' }, { status: 403 });
     }
 
     await prisma.admin.delete({ where: { id } });

@@ -4,6 +4,16 @@ import { sendSupabaseResetPasswordEmail, syncSupabaseAdminUser } from '@/lib/sup
 
 export const runtime = 'nodejs';
 
+function getAppBaseUrl(request: Request) {
+  const configuredUrl = process.env.NEXTAUTH_URL?.trim() || request.headers.get('origin') || 'http://localhost:3000';
+
+  if (/^https?:\/\//i.test(configuredUrl)) {
+    return configuredUrl.replace(/\/+$/, '');
+  }
+
+  return `https://${configuredUrl.replace(/\/+$/, '')}`;
+}
+
 export async function POST(request: Request) {
   try {
     const { email } = await request.json();
@@ -24,7 +34,7 @@ export async function POST(request: Request) {
       createIfMissing: true,
     });
 
-    const resetUrl = `${request.headers.get('origin') || 'http://localhost:3000'}/admin/reset-password`;
+    const resetUrl = `${getAppBaseUrl(request)}/admin/reset-password`;
 
     await sendSupabaseResetPasswordEmail(admin.email, resetUrl);
 

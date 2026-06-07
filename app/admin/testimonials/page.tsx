@@ -127,7 +127,7 @@ export default function TestimonialsPage() {
         ) : (
           <div className="space-y-4">
             {testimonials.map((item) => (
-              <div key={item.id} className="admin-card flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div key={item.id} className="admin-card flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="font-semibold text-gray-900">{item.customerName}</p>
                   <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap">{item.message}</p>
@@ -135,11 +135,15 @@ export default function TestimonialsPage() {
                     Rating: {item.rating} | {item.isApproved ? 'Disetujui' : 'Menunggu approval'}
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end md:w-auto md:flex-nowrap">
                   <button
                     onClick={() => handleApprovalToggle(item.id, !item.isApproved)}
                     disabled={updatingId === item.id}
-                    className={item.isApproved ? 'admin-btn admin-btn-secondary text-xs' : 'admin-btn admin-btn-primary text-xs'}
+                    className={
+                      item.isApproved
+                        ? 'admin-btn admin-btn-secondary text-xs w-full sm:w-auto whitespace-nowrap justify-center px-4'
+                        : 'admin-btn admin-btn-primary text-xs w-full sm:w-auto whitespace-nowrap justify-center px-4'
+                    }
                   >
                     {updatingId === item.id
                       ? 'Menyimpan...'
@@ -147,7 +151,10 @@ export default function TestimonialsPage() {
                         ? 'Batalkan Approval'
                         : 'Setujui'}
                   </button>
-                  <button onClick={() => handleDelete(item.id)} className="admin-btn admin-btn-danger text-xs">
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="admin-btn admin-btn-danger text-xs w-full sm:w-auto whitespace-nowrap justify-center px-4"
+                  >
                     Hapus
                   </button>
                 </div>

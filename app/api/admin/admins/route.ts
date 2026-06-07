@@ -44,6 +44,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  if (tokenData.role !== 'superadmin') {
+    return NextResponse.json({ error: 'Hanya superadmin yang dapat menambahkan admin baru' }, { status: 403 });
+  }
+
   try {
     const body = await request.json();
     const name = String(body.name || '').trim();

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import PasswordField from '@/components/admin/PasswordField';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -78,19 +79,15 @@ export default function AdminLoginPage() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-              placeholder="••••••••"
-            />
-          </div>
+          <PasswordField
+            label="Password"
+            required
+            value={password}
+            onChange={setPassword}
+            placeholder="••••••••"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+            autoComplete="current-password"
+          />
 
           <button
             type="submit"

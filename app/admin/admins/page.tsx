@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
+import PasswordField from '@/components/admin/PasswordField';
 
 type AdminUser = {
   id: string;
@@ -40,6 +41,7 @@ export default function AdminManagementPage() {
   const [message, setMessage] = useState('');
 
   const isEditing = useMemo(() => Boolean(editingAdminId), [editingAdminId]);
+  const canManageAdminRoles = currentAdmin?.role === 'superadmin';
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
@@ -91,6 +93,12 @@ export default function AdminManagementPage() {
     setError('');
     setMessage('');
 
+    if (!isEditing && !canManageAdminRoles) {
+      setSaving(false);
+      setError('Hanya superadmin yang dapat menambahkan admin baru');
+      return;
+    }
+
     try {
       const token = localStorage.getItem('adminToken');
       const endpoint = isEditing ? `/api/admin/admins/${editingAdminId}` : '/api/admin/admins';
@@ -99,8 +107,15 @@ export default function AdminManagementPage() {
       const payload: Partial<FormState> = {
         name: form.name.trim(),
         email: form.email.trim(),
-        role: form.role,
       };
+
+      if (isEditing) {
+        if (canManageAdminRoles) {
+          payload.role = form.role;
+        }
+      } else {
+        payload.role = form.role;
+      }
 
       if (form.password.trim()) {
         payload.password = form.password;
@@ -153,6 +168,26 @@ export default function AdminManagementPage() {
     });
   };
 
+  const canDeleteAdmin = (admin: AdminUser) => {
+    if (!currentAdmin) {
+      return false;
+    }
+
+    if (currentAdmin.id === admin.id) {
+      return false;
+    }
+
+    if (currentAdmin.role === 'admin') {
+      return false;
+    }
+
+    if (currentAdmin.role === 'superadmin' && admin.role === 'superadmin') {
+      return false;
+    }
+
+    return true;
+  };
+
   const handleDelete = async (admin: AdminUser) => {
     const confirmed = window.confirm(`Yakin ingin menghapus admin ${admin.name}?`);
     if (!confirmed) return;
@@ -193,7 +228,12 @@ export default function AdminManagementPage() {
         <div className="admin-card mb-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">{isEditing ? 'Edit Admin' : 'Tambah Admin Baru'}</h2>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {!isEditing && !canManageAdminRoles ? (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Hanya superadmin yang dapat menambahkan admin baru.
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="admin-form-label">Nama</label>
@@ -227,23 +267,23 @@ export default function AdminManagementPage() {
                   value={form.role}
                   onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))}
                   className="admin-select"
+                  disabled={!canManageAdminRoles && isEditing}
                 >
                   <option value="admin">Admin</option>
                   <option value="superadmin">Superadmin</option>
                 </select>
+                {!canManageAdminRoles && isEditing && (
+                  <p className="mt-2 text-xs text-gray-500">Role hanya bisa diubah oleh superadmin.</p>
+                )}
               </div>
 
-              <div>
-                <label className="admin-form-label">Password {isEditing ? '(opsional)' : ''}</label>
-                <input
-                  type="password"
-                  required={!isEditing}
-                  value={form.password}
-                  onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
-                  className="admin-input"
-                  placeholder={isEditing ? 'Isi jika ingin ganti password' : 'Minimal 8 karakter'}
-                />
-              </div>
+              <PasswordField
+                label={`Password ${isEditing ? '(opsional)' : ''}`}
+                required={!isEditing}
+                value={form.password}
+                onChange={(value) => setForm((prev) => ({ ...prev, password: value }))}
+                placeholder={isEditing ? 'Isi jika ingin ganti password' : 'Minimal 8 karakter'}
+              />
             </div>
 
             <div className="flex gap-3">
@@ -256,7 +296,8 @@ export default function AdminManagementPage() {
                 {saving ? 'Menyimpan...' : isEditing ? 'Simpan Perubahan' : 'Tambah Admin'}
               </button>
             </div>
-          </form>
+            </form>
+          )}
         </div>
 
         <div className="admin-card">
@@ -294,8 +335,16 @@ export default function AdminManagementPage() {
                             type="button"
                             onClick={() => handleDelete(admin)}
                             className="admin-btn admin-btn-danger text-xs disabled:opacity-50"
-                            disabled={currentAdmin?.id === admin.id}
-                            title={currentAdmin?.id === admin.id ? 'Tidak dapat menghapus akun sendiri' : 'Hapus admin'}
+                            disabled={!canDeleteAdmin(admin)}
+                            title={
+                              currentAdmin?.id === admin.id
+                                ? 'Tidak dapat menghapus akun sendiri'
+                                : currentAdmin?.role === 'admin'
+                                  ? 'Role admin tidak memiliki izin untuk menghapus admin'
+                                  : currentAdmin?.role === 'superadmin' && admin.role === 'superadmin'
+                                    ? 'Superadmin tidak dapat menghapus superadmin lain'
+                                    : 'Hapus admin'
+                            }
                           >
                             Hapus
                           </button>
