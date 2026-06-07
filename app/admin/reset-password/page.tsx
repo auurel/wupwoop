@@ -1,30 +1,19 @@
  'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { getSupabaseBrowserClient } from '@/lib/supabase-auth';
+import { useSearchParams, useRouter } from 'next/navigation';
 import PasswordField from '@/components/admin/PasswordField';
 
 function ResetPasswordForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = useMemo(() => searchParams.get('token') || '', [searchParams]);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [sessionReady, setSessionReady] = useState(false);
-
-  useEffect(() => {
-    const supabase = getSupabaseBrowserClient();
-
-    supabase.auth
-      .getSession()
-      .then(({ data }) => {
-        setSessionReady(Boolean(data.session));
-      })
-      .catch(() => setSessionReady(false));
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,16 +28,20 @@ function ResetPasswordForm() {
     }
 
     try {
-      const supabase = getSupabaseBrowserClient();
-      const { error: updateError } = await supabase.auth.updateUser({ password });
+      const res = await fetch('/api/admin/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, password }),
+      });
 
-      if (updateError) throw updateError;
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Gagal mereset password');
 
       setSuccess('Password berhasil direset');
       setPassword('');
       setConfirmPassword('');
 
-      await supabase.auth.signOut();
       setTimeout(() => router.push('/admin/login'), 1000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Terjadi kesalahan');
@@ -65,9 +58,9 @@ function ResetPasswordForm() {
           <p className="text-gray-600 mt-2">Buat password baru untuk akun admin Anda.</p>
         </div>
 
-        {!sessionReady && (
+        {!token && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-            Sesi reset tidak ditemukan. Buka halaman ini dari link reset email Supabase.
+            Token reset tidak ditemukan. Buka halaman ini dari link reset email.
           </div>
         )}
 
@@ -106,7 +99,7 @@ function ResetPasswordForm() {
 
           <button
             type="submit"
-            disabled={loading || !sessionReady}
+            disabled={loading || !token}
             className="w-full py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Menyimpan...' : 'Reset Password'}
@@ -127,5 +120,9 @@ function ResetPasswordForm() {
 }
 
 export default function ResetPasswordPage() {
-  return <ResetPasswordForm />;
+  return (
+    <Suspense fallback={null}>
+      <ResetPasswordForm />
+    </Suspense>
+  );
 }

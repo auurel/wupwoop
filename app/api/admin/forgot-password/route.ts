@@ -1,8 +1,15 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-import { sendSupabaseResetPasswordEmail, syncSupabaseAdminUser } from '@/lib/supabase-auth';
+import { sign } from 'jsonwebtoken';
+import { sendAdminForgotPasswordEmail } from '@/lib/mailer';
 
 export const runtime = 'nodejs';
+
+type ResetTokenPayload = {
+  id: string;
+  email: string;
+  purpose: 'reset-password';
+};
 
 function getAppBaseUrl(request: Request) {
   const configuredUrl = process.env.NEXTAUTH_URL?.trim() || request.headers.get('origin') || 'http://localhost:3000';
@@ -17,26 +24,35 @@ function getAppBaseUrl(request: Request) {
 export async function POST(request: Request) {
   try {
     const { email } = await request.json();
+    const normalizedEmail = String(email || '').trim().toLowerCase();
 
-    if (!email) {
+    if (!normalizedEmail) {
       return NextResponse.json({ error: 'Email harus diisi' }, { status: 400 });
     }
 
-    const admin = await prisma.admin.findUnique({ where: { email } });
+    const admin = await prisma.admin.findUnique({ where: { email: normalizedEmail } });
 
     if (!admin) {
       return NextResponse.json({ error: 'Email tidak terdaftar' }, { status: 404 });
     }
 
-    await syncSupabaseAdminUser({
-      email: admin.email,
-      name: admin.name,
-      createIfMissing: true,
+    const token = sign(
+      {
+        id: admin.id,
+        email: admin.email,
+        purpose: 'reset-password',
+      } satisfies ResetTokenPayload,
+      process.env.NEXTAUTH_SECRET || 'your-secret-key',
+      { expiresIn: '30m' }
+    );
+
+    const resetUrl = `${getAppBaseUrl(request)}/admin/reset-password?token=${encodeURIComponent(token)}`;
+
+    await sendAdminForgotPasswordEmail({
+      to: admin.email,
+      adminName: admin.name,
+      resetUrl,
     });
-
-    const resetUrl = `${getAppBaseUrl(request)}/admin/reset-password`;
-
-    await sendSupabaseResetPasswordEmail(admin.email, resetUrl);
 
     return NextResponse.json({
       message: 'Email reset password sudah dikirim ke inbox admin.',
